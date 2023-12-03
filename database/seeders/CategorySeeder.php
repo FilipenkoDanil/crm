@@ -16,6 +16,9 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+        Category::create([
+            'title' => 'Without category'
+        ]);
         Category::factory(5)->create();
     }
 }

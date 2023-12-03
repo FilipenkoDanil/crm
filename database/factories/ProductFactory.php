@@ -19,8 +19,8 @@ class ProductFactory extends Factory
         return [
             'title' => $this->faker->sentence(rand(1, 2)),
             'barcode' => $this->faker->ean13(),
-            'code' => $this->faker->postcode,
-            'category_id' => $this->faker->numberBetween(1, 5),
+            'code' => $this->faker->postcode(),
+            'category_id' => $this->faker->numberBetween(1, 6),
             'purchase_price' => $this->faker->numberBetween(1, 10),
             'selling_price' => $this->faker->numberBetween(10, 20)
         ];

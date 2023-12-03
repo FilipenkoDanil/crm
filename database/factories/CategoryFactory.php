@@ -19,7 +19,6 @@ class CategoryFactory extends Factory
     {
         return [
             'title' => $this->faker->word(),
-            'slug' => Str::slug($this->faker->words(2, true)),
         ];
     }
 }
