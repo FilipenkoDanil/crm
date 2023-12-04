@@ -32,7 +32,6 @@ class Category extends Model
         return $this->belongsTo(Category::class);
     }
 
-
     public function scopeMainParents(Builder $query)
     {
         return $query->whereNull('parent_id');
