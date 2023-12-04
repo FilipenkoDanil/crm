@@ -12,26 +12,26 @@ class CategoryService
 {
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        if ($category->id !== 1) {
-            $category->update($request->validated());
-            return response()->json(new CategoryResource($category));
+        if ($category->id == 1) {
+            return response()->json(['message' => 'This category cannot be updated.'], 422);
         }
 
-        return response()->json(['message' => 'This category cannot be updated.'], 422);
-
+        $category->update($request->validated());
+        return response()->json(new CategoryResource($category));
     }
 
     public function delete(Category $category): JsonResponse
     {
-        if ($category->id !== 1) {
-            DB::transaction(function () use ($category) {
-                $category->products()->update(['category_id' => 1]);
-                $category->subcategories()->update(['parent_id' => $category->parent_id]);
-                $category->delete();
-                return response()->json(['success' => true, 'message' => 'Category deleted.']);
-            });
+        if ($category->id == 1) {
+            return response()->json(['success' => false, 'message' => 'This category cannot be deleted.'], 422);
         }
 
-        return response()->json(['success' => false, 'message' => 'This category cannot be deleted.'], 422);
+        DB::transaction(function () use ($category) {
+            $category->products()->withTrashed()->update(['category_id' => 1]);
+            $category->subcategories()->update(['parent_id' => $category->parent_id]);
+            $category->delete();
+        });
+
+        return response()->json(['success' => true, 'message' => 'Category deleted.']);
     }
 }
