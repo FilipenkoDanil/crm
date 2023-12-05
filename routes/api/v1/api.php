@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\ClientController;
 use App\Http\Controllers\Api\v1\ProductController;
+use App\Http\Controllers\Api\v1\PurchaseController;
 use App\Http\Controllers\Api\v1\SupplierController;
 use App\Http\Controllers\Api\v1\WarehouseController;
 use Illuminate\Http\Request;
@@ -30,3 +31,4 @@ Route::apiResource('warehouses', WarehouseController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('clients', ClientController::class);
 Route::apiResource('suppliers', SupplierController::class);
+Route::apiResource('purchases', PurchaseController::class)->except('destroy');
