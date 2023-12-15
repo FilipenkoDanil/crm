@@ -5,6 +5,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@mdi/font": "^7.3.67",
         "@popperjs/core": "^2.11.6",
         "@vitejs/plugin-vue": "^4.0.0",
         "axios": "^1.1.2",
@@ -14,6 +15,10 @@
         "postcss": "^8.1.14",
         "sass": "^1.56.1",
         "vite": "^4.0.0",
-        "vue": "^3.2.37"
+        "vue": "^3.2.37",
+        "vuetify": "^3.4.5"
+    },
+    "dependencies": {
+        "vue-router": "^4.2.5"
     }
 }
