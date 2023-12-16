@@ -21,7 +21,10 @@ export default {
                         email: this.email,
                         password: this.password,
                     })
-                        .then(() => this.loading = false)
+                        .then(() => {
+                            this.loading = false
+                            this.$router.push({name: 'home'})
+                        })
                         .catch(err => {
                             this.errors = err.response.data.errors
                             this.loading = false
