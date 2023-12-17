@@ -21,7 +21,7 @@ class CategoryController extends Controller
 
     public function index(): JsonResponse
     {
-        return response()->json(CategoryResource::collection(Category::mainParents()->get()));
+        return response()->json(CategoryResource::collection(Category::all()));
     }
 
     public function store(StoreCategoryRequest $request): JsonResponse

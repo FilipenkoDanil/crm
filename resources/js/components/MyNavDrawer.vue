@@ -17,7 +17,7 @@ export default {
                 </v-list-item-title>
             </v-list-item>
 
-            <v-list-item link rounded="e-xl" prepend-icon="mdi-note-outline">
+            <v-list-item link rounded="e-xl" prepend-icon="mdi-note-outline" :to="{name: 'products.index'}">
                 <v-list-item-title>Products</v-list-item-title>
             </v-list-item>
 

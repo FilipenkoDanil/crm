@@ -22,7 +22,7 @@ class ProductController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return ProductResource::collection(Product::paginate(15));
+        return ProductResource::collection(Product::orderBy('created_at', 'desc')->with('category')->get());
     }
 
     public function store(StoreProductRequest $request): JsonResponse

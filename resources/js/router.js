@@ -27,6 +27,15 @@ const router = createRouter({
             meta: {
                 layout: 'AuthLayout'
             }
+        },
+        {
+            path: '/products',
+            name: 'products.index',
+            component: () => import('./pages/Products/ProductsPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Products'
+            }
         }
     ]
 })
