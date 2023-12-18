@@ -31,10 +31,19 @@ const router = createRouter({
         {
             path: '/products',
             name: 'products.index',
-            component: () => import('./pages/Products/ProductsPage.vue'),
+            component: () => import('./pages/products/ProductsPage.vue'),
             meta: {
                 layout: 'MainLayout',
                 pageTitleBar: 'Products'
+            }
+        },
+        {
+            path: '/clients',
+            name: 'clients.index',
+            component: () => import('./pages/clients/ClientsPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Clients'
             }
         }
     ]
