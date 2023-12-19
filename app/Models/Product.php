@@ -14,6 +14,16 @@ class Product extends Model
 
     protected $fillable = ['title', 'barcode', 'code', 'image', 'category_id', 'purchase_price', 'selling_price'];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($product) {
+            $warehouses = Warehouse::all();
+            $product->warehouses()->attach($warehouses);
+        });
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
