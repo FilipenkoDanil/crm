@@ -45,6 +45,15 @@ const router = createRouter({
                 layout: 'MainLayout',
                 pageTitleBar: 'Clients'
             }
+        },
+        {
+            path: '/warehouses',
+            name: 'warehouses.index',
+            component: () => import('./pages/warehouse/WarehousesPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Warehouses'
+            }
         }
     ]
 })

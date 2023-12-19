@@ -25,6 +25,10 @@ export default {
                 <v-list-item-title>Clients</v-list-item-title>
             </v-list-item>
 
+            <v-list-item link rounded="e-xl" prepend-icon="mdi-warehouse" :to="{name: 'warehouses.index'}">
+                <v-list-item-title>Warehouses</v-list-item-title>
+            </v-list-item>
+
             <v-list-item link rounded="e-xl" prepend-icon="mdi-file-move-outline">
                 <v-list-item-title>Sales</v-list-item-title>
             </v-list-item>

@@ -72,6 +72,7 @@ export default {
                 </v-img>
 
                 <v-file-input v-model="editableProduct.uploadImage" accept="image/png, image/jpeg" show-size
+                              :error-messages="errors.image"
                               label="Upload image" class="mt-4"></v-file-input>
             </v-card-text>
 
