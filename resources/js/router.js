@@ -54,6 +54,15 @@ const router = createRouter({
                 layout: 'MainLayout',
                 pageTitleBar: 'Warehouses'
             }
+        },
+        {
+            path: '/warehouses/:id',
+            name: 'warehouses.show',
+            component: () => import('./pages/warehouse/WarehouseProductsPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Products in warehouse'
+            }
         }
     ]
 })

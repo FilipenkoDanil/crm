@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\ClientController;
 use App\Http\Controllers\Api\v1\ProductController;
+use App\Http\Controllers\Api\v1\ProductWarehouseController;
 use App\Http\Controllers\Api\v1\PurchaseController;
 use App\Http\Controllers\Api\v1\SaleController;
 use App\Http\Controllers\Api\v1\SupplierController;
@@ -34,3 +35,5 @@ Route::apiResource('clients', ClientController::class);
 Route::apiResource('suppliers', SupplierController::class);
 Route::apiResource('purchases', PurchaseController::class)->except('destroy');
 Route::apiResource('sales', SaleController::class)->except(['update', 'destroy']);
+
+Route::patch('/products-warehouses', [ProductWarehouseController::class, 'update']);

@@ -38,6 +38,7 @@ export default {
             <v-card-actions class="px-4">
                 <v-btn @click="editDrawerClose" color="warning" variant="outlined">Cancel</v-btn>
                 <v-btn @click="updateWarehouse" color="success" variant="outlined">Save</v-btn>
+                <v-btn color="success" variant="outlined" :to="{name: 'warehouses.show', params: {id: this.editableWarehouse.id || 1}}">Go to</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn @click="deleteWarehouse" color="error" variant="outlined">Delete</v-btn>
             </v-card-actions>

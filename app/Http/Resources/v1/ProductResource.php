@@ -25,7 +25,8 @@ class ProductResource extends JsonResource
             'category_id' => $this->category_id,
             'purchase_price' => $this->purchase_price,
             'selling_price' => $this->selling_price,
-            'category' => $this->whenLoaded('category')
+            'category' => $this->whenLoaded('category'),
+            'pivot' => $this->whenLoaded('pivot')
         ];
     }
 }
