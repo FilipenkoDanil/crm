@@ -49,7 +49,7 @@ const router = createRouter({
         {
             path: '/warehouses',
             name: 'warehouses.index',
-            component: () => import('./pages/warehouse/WarehousesPage.vue'),
+            component: () => import('./pages/warehouses/WarehousesPage.vue'),
             meta: {
                 layout: 'MainLayout',
                 pageTitleBar: 'Warehouses'
@@ -58,10 +58,19 @@ const router = createRouter({
         {
             path: '/warehouses/:id',
             name: 'warehouses.show',
-            component: () => import('./pages/warehouse/WarehouseProductsPage.vue'),
+            component: () => import('./pages/warehouses/WarehouseProductsPage.vue'),
             meta: {
                 layout: 'MainLayout',
                 pageTitleBar: 'Products in warehouse'
+            }
+        },
+        {
+            path: '/suppliers',
+            name: 'suppliers.index',
+            component: () => import('./pages/suppliers/SuppliersPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Suppliers'
             }
         }
     ]
