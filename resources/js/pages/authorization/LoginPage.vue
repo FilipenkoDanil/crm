@@ -21,8 +21,9 @@ export default {
                         email: this.email,
                         password: this.password,
                     })
-                        .then(() => {
+                        .then(r => {
                             this.loading = false
+                            localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN'])
                             this.$router.push({name: 'home'})
                         })
                         .catch(err => {

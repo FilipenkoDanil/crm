@@ -20,21 +20,30 @@ class PurchaseService
 
         $data = $request->validated();
 
-        $purchase = DB::transaction(function () use ($request, $data) {
-            $purchase = $this->createPurchase($data);
-            $this->createMovements($purchase, $request->input('data'), $data['warehouse_id'], 'purchase_price');
-            $this->updateTotalAmount($purchase);
-            return $purchase;
-        });
+        try {
+            $purchase = DB::transaction(function () use ($request, $data) {
+                $purchase = $this->createPurchase($data);
+                $this->createMovements($purchase, $request->input('data'), $data['warehouse_id'], 'purchase_price');
+                $this->updateTotalAmount($purchase);
+                return $purchase;
+            });
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode());
+        }
 
         return response()->json(new PurchaseResource($purchase));
     }
 
     protected function createPurchase(array $data)
     {
-        return Purchase::create([
-            'supplier_id' => $data['supplier_id'],
-            'user_id' => 1 // TODO после добавления авторизации заменить на Auth::id()
-        ]);
+        if (auth()->check()) {
+            return Purchase::create([
+                'supplier_id' => $data['supplier_id'],
+                'user_id' => auth()->id()
+            ]);
+        } else {
+            throw new \Exception('Unauthorized.', 419);
+        }
+
     }
 }

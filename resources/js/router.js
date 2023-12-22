@@ -72,8 +72,49 @@ const router = createRouter({
                 layout: 'MainLayout',
                 pageTitleBar: 'Suppliers'
             }
+        },
+        {
+            path: '/purchases',
+            name: 'purchases.index',
+            component: () => import('./pages/purchases/PurchasesPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Purchases'
+            }
+        },
+        {
+            path: '/purchases/create',
+            name: 'purchases.create',
+            component: () => import('./pages/purchases/PurchaseCreatePage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Create purchase'
+            }
         }
     ]
 })
+
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('x_xsrf_token');
+
+    if (!token) {
+        if (to.name === 'login' || to.name === 'register') {
+            return next();
+        }
+
+        return next({
+            name: 'login',
+        });
+    }
+
+
+    if (to.name === 'login' || to.name === 'register') {
+        return next({
+            name: 'home',
+        });
+    }
+
+    next();
+});
 
 export default router

@@ -5,7 +5,10 @@ export default {
     methods: {
         logout() {
             axios.post('/logout')
-                .then(() => this.$router.push({name: 'login'}))
+                .then(() => {
+                    localStorage.removeItem('x_xsrf_token')
+                    this.$router.push({name: 'login'})
+                })
         },
         emitButtonClick() {
             this.$emit('buttonClick');

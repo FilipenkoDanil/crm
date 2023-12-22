@@ -17,7 +17,7 @@ export default {
                 </v-list-item-title>
             </v-list-item>
 
-            <v-list-item link rounded="e-xl" prepend-icon="mdi-note-outline" :to="{name: 'products.index'}">
+            <v-list-item link rounded="e-xl" prepend-icon="mdi-package-variant" :to="{name: 'products.index'}">
                 <v-list-item-title>Products</v-list-item-title>
             </v-list-item>
 
@@ -32,6 +32,22 @@ export default {
             <v-list-item link rounded="e-xl" prepend-icon="mdi-warehouse" :to="{name: 'warehouses.index'}">
                 <v-list-item-title>Warehouses</v-list-item-title>
             </v-list-item>
+
+            <v-list-group>
+                <template v-slot:activator="{ props }">
+                    <v-list-item v-bind="props" link rounded="e-xl" prepend-icon="mdi-file-outline">
+                        <v-list-item-title>Purchases</v-list-item-title>
+                    </v-list-item>
+                </template>
+
+                <v-list-item link rounded="e-xl" prepend-icon="mdi-file-outline" :to="{name: 'purchases.index'}">
+                    <v-list-item-title>List</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item link rounded="e-xl" prepend-icon="mdi-file-plus-outline" :to="{name: 'purchases.create'}">
+                    <v-list-item-title>Create</v-list-item-title>
+                </v-list-item>
+            </v-list-group>
 
             <v-list-item link rounded="e-xl" prepend-icon="mdi-file-move-outline">
                 <v-list-item-title>Sales</v-list-item-title>

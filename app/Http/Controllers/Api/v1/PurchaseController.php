@@ -22,7 +22,7 @@ class PurchaseController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return PurchaseResource::collection(Purchase::orderBy('created_at', 'desc')->paginate(15));
+        return PurchaseResource::collection(Purchase::orderBy('created_at', 'desc')->with('user', 'supplier')->get());
     }
 
     public function store(StorePurchaseRequest $request): JsonResponse
