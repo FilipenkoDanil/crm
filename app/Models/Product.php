@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Restorable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Restorable;
 
     protected $fillable = ['title', 'barcode', 'code', 'image', 'category_id', 'purchase_price', 'selling_price'];
 

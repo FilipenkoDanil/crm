@@ -90,6 +90,15 @@ const router = createRouter({
                 layout: 'MainLayout',
                 pageTitleBar: 'Create purchase'
             }
+        },
+        {
+            path: '/trash',
+            name: 'trash',
+            component: () => import('./pages/trash/TrashPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Trash'
+            }
         }
     ]
 })

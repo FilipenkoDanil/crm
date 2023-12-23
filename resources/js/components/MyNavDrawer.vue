@@ -53,6 +53,10 @@ export default {
                 <v-list-item-title>Sales</v-list-item-title>
             </v-list-item>
 
+            <v-list-item link rounded="e-xl" prepend-icon="mdi-trash-can-outline" :to="{name: 'trash'}">
+                <v-list-item-title>Trash</v-list-item-title>
+            </v-list-item>
+
             <div class="d-flex text-subtitle-2 text-grey-darken-1 align-center">
                 <v-divider></v-divider>
                 <span class="ml-1 mr-3 text-uppercase">Title</span>
