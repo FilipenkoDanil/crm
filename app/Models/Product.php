@@ -34,4 +34,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Warehouse::class)->withPivot(['stock', 'min_stock_notify']);
     }
+
+    public function movements()
+    {
+        return $this->hasMany(Movement::class);
+    }
 }

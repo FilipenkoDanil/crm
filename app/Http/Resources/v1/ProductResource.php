@@ -26,7 +26,8 @@ class ProductResource extends JsonResource
             'purchase_price' => $this->purchase_price,
             'selling_price' => $this->selling_price,
             'category' => $this->whenLoaded('category'),
-            'pivot' => $this->whenLoaded('pivot')
+            'pivot' => $this->whenLoaded('pivot'),
+            'movements' => MovementResource::collection($this->whenLoaded('movements'))
         ];
     }
 }

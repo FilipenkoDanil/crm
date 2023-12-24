@@ -32,7 +32,9 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
-        return response()->json(new ProductResource($product));
+        return response()->json(new ProductResource($product->load(['movements' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])));
     }
 
     public function update(UpdateProductRequest $request, Product $product): JsonResponse

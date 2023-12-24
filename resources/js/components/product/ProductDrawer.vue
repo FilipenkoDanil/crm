@@ -2,6 +2,14 @@
 export default {
     name: "ProductDrawer",
 
+    data() {
+        return {
+            movements: [],
+
+            loading: null,
+        }
+    },
+
     props: {
         editDrawer: Boolean,
         editableProduct: Object,
@@ -21,13 +29,32 @@ export default {
         },
         deleteProduct() {
             this.$emit('deleteProduct');
+        },
+
+        getMovements() {
+            this.loading = true
+            axios.get(`/api/v1/products/${this.editableProduct.id}`)
+                .then(r => {
+                    this.movements = r.data.movements
+                    this.loading = false
+                })
+        },
+
+        getColor(item) {
+            if (item.movementable_type === 'Purchase') {
+                return 'yellow-darken-4'
+            } else if (item.movementable_type === 'Sale') {
+                return 'lime-accent-4'
+            } else {
+                return 'red'
+            }
         }
     }
 }
 </script>
 
 <template>
-    <v-navigation-drawer v-bind="editDrawer" temporary="" rail rail-width="450" location="right">
+    <v-navigation-drawer v-bind="editDrawer" :on-update:model-value="movements = []" temporary="" rail rail-width="450" location="right">
         <v-card flat>
             <v-card-title class="text-center mb-3">Editing a product #{{ editableProduct.id }}</v-card-title>
             <v-card-text>
@@ -82,6 +109,22 @@ export default {
                 <v-spacer></v-spacer>
                 <v-btn @click="deleteProduct" color="error" variant="outlined">Delete</v-btn>
             </v-card-actions>
+
+            <v-card-text>
+                <v-btn @click="getMovements" block color="green-darken-3" append-icon="mdi-reload">Get history</v-btn>
+
+                <div class="text-center">
+                    <v-progress-circular class="mt-15" v-if="loading" size="80" indeterminate color="red-darken-4"></v-progress-circular>
+                </div>
+
+                <v-list rounded v-if="!loading">
+                    <v-list-item :base-color="getColor(item)" v-for="item in movements" :key="item.id" link class="mb-2">
+                        <v-list-item-title>{{ item.movementable_type }} #{{ item.movementable_id }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ item.created_at }}</v-list-item-subtitle>
+                    </v-list-item>
+                </v-list>
+
+            </v-card-text>
         </v-card>
     </v-navigation-drawer>
 </template>
