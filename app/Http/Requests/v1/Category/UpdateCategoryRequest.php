@@ -26,6 +26,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'title' => 'min:1',
+            'slug' => 'min:1|unique:categories,slug,' . $this->category->id,
             'parent_id' => [
                 'nullable',
                 'exists:categories,id',

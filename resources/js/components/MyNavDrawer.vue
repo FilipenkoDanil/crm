@@ -21,6 +21,10 @@ export default {
                 <v-list-item-title>Products</v-list-item-title>
             </v-list-item>
 
+            <v-list-item link rounded="e-xl" prepend-icon="mdi-ballot-outline" :to="{name: 'categories.index'}">
+                <v-list-item-title>Categories</v-list-item-title>
+            </v-list-item>
+
             <v-list-item link rounded="e-xl" prepend-icon="mdi-account-group-outline" :to="{name: 'clients.index'}">
                 <v-list-item-title>Clients</v-list-item-title>
             </v-list-item>

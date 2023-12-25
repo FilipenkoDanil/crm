@@ -92,6 +92,15 @@ const router = createRouter({
             }
         },
         {
+            path: '/categories',
+            name: 'categories.index',
+            component: () => import('./pages/categories/CategoriesPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Categories'
+            }
+        },
+        {
             path: '/trash',
             name: 'trash',
             component: () => import('./pages/trash/TrashPage.vue'),
