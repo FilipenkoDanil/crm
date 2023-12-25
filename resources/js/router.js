@@ -92,6 +92,15 @@ const router = createRouter({
             }
         },
         {
+            path: '/purchases/:id',
+            name: 'purchases.show',
+            component: () => import('./pages/purchases/PurchaseInfoPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Purchase info'
+            }
+        },
+        {
             path: '/categories',
             name: 'categories.index',
             component: () => import('./pages/categories/CategoriesPage.vue'),

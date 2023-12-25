@@ -24,7 +24,8 @@ class MovementResource extends JsonResource
             'product' => ProductResource::make($this->whenLoaded('product')),
             'movementable_type' => class_basename($this->movementable_type),
             'movementable_id' => $this->movementable_id,
-            'created_at' => $this->created_at->format('d-m-Y H:i')
+            'created_at' => $this->created_at->format('d-m-Y H:i'),
+            'warehouse' => $this->whenLoaded('warehouse')
         ];
     }
 }

@@ -56,6 +56,10 @@ export default {
                 })
         },
 
+        onRowClick(item, row) {
+            this.$router.push({name: 'purchases.show', params: {id: row.item.id}})
+        },
+
         showSnackbar(text) {
             this.snackbar = true
             this.snackbarText = text
@@ -69,9 +73,9 @@ export default {
 </script>
 
 <template>
-    <v-data-table :items="purchases" :headers="headers">
+    <v-data-table :items="purchases" :headers="headers"  @click:row="onRowClick" hover>
         <template v-slot:item.isApproved="{ item }">
-            <v-btn @click="toggleApprove(item)" :color="item.isApproved ? 'green' : 'orange-darken-1'">
+            <v-btn @click.stop.prevent="toggleApprove(item)" :color="item.isApproved ? 'green' : 'orange-darken-1'">
                 {{ item.isApproved ? 'Approved' : 'Approve' }}
             </v-btn>
         </template>

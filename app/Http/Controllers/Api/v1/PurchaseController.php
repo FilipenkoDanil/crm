@@ -32,7 +32,7 @@ class PurchaseController extends Controller
 
     public function show(Purchase $purchase): JsonResponse
     {
-        return response()->json(new PurchaseResource($purchase->load('movements')));
+        return response()->json(new PurchaseResource($purchase->load('movements.product', 'movements.warehouse', 'supplier', 'user')));
     }
 
     public function update(Purchase $purchase): JsonResponse

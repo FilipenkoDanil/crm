@@ -22,4 +22,9 @@ class Movement extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 }

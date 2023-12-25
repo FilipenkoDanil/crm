@@ -48,7 +48,15 @@ export default {
             } else {
                 return 'red'
             }
-        }
+        },
+
+        getLink(item) {
+            if (item.movementable_type === 'Purchase') {
+                return `/purchases/${item.movementable_id}`
+            } else if (item.movementable_type === 'Sale') {
+                return `/sales/${item.movementable_id}`
+            }
+        },
     }
 }
 </script>
@@ -118,7 +126,7 @@ export default {
                 </div>
 
                 <v-list rounded v-if="!loading">
-                    <v-list-item :base-color="getColor(item)" v-for="item in movements" :key="item.id" link class="mb-2">
+                    <v-list-item :base-color="getColor(item)" v-for="item in movements" :key="item.id" :to="getLink(item)" link class="mb-2">
                         <v-list-item-title>{{ item.movementable_type }} #{{ item.movementable_id }}</v-list-item-title>
                         <v-list-item-subtitle>{{ item.created_at }}</v-list-item-subtitle>
                     </v-list-item>
