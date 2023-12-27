@@ -117,6 +117,14 @@ const router = createRouter({
                 layout: 'MainLayout',
                 pageTitleBar: 'Trash'
             }
+        },
+        {
+            path: '/cashbox',
+            name: 'cashbox',
+            component: () => import('./pages/CashboxPage.vue'),
+            meta: {
+                layout: 'CashboxLayout',
+            }
         }
     ]
 })

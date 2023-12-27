@@ -55,8 +55,9 @@ export default {
                         <v-btn
                             rounded
                             variant="text"
+                            :to="{name: 'cashbox'}"
                         >
-                            Edit Account
+                            Cashbox mode
                         </v-btn>
                         <v-divider class="my-3"></v-divider>
                         <v-btn

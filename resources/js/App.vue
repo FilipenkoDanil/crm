@@ -1,12 +1,14 @@
 <script>
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import MainLayout from "@/layouts/MainLayout.vue";
+import CashboxLayout from "@/layouts/CashboxLayout.vue";
 export default {
     name: "App",
 
     components: {
         AuthLayout,
-        MainLayout
+        MainLayout,
+        CashboxLayout
     }
 }
 </script>
