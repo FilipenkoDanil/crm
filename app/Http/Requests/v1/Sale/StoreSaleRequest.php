@@ -26,9 +26,10 @@ class StoreSaleRequest extends FormRequest
         return [
             'client_id' => 'required|exists:clients,id',
             'warehouse_id' => 'required|exists:warehouses,id',
+            'data' => 'required|array',
             'data.*.id' => 'required|exists:products,id',
-            'data.*.quantity' => 'required',
-            'data.*.selling_price' => 'required',
+            'data.*.quantity' => 'required|min:1|numeric',
+            'data.*.selling_price' => 'required|min:0.01|numeric',
         ];
     }
 }

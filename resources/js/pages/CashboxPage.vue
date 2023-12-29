@@ -1,11 +1,32 @@
 <script>
+import MySnackBar from "@/components/MySnackBar.vue";
+import CashProductsList from "@/components/cashbox/CashProductsList.vue";
+import CartSummary from "@/components/cashbox/CartSummary.vue";
+
 export default {
     name: "CashboxPage",
+    components: {CartSummary, CashProductsList, MySnackBar},
     data() {
         return {
             products: [],
             selectedProducts: [],
+            clients: [],
+            warehouses: [],
+
             searchText: '',
+
+            dialog: false,
+            received: null,
+            change: 0,
+            total: 0,
+
+            errors: {},
+
+            selectedClient: 1,
+            selectedWarehouse: null,
+
+            snackbar: false,
+            snackbarText: '',
         }
     },
 
@@ -17,15 +38,55 @@ export default {
                 })
         },
 
+        getClients() {
+            axios.get('/api/v1/clients')
+                .then(r => {
+                    this.clients = r.data
+                })
+        },
+
+        getWarehouses() {
+            axios.get('/api/v1/warehouses')
+                .then(r => {
+                    this.warehouses = r.data
+                })
+        },
+
+        createSale() {
+            const requestData = {
+                client_id: this.selectedClient,
+                warehouse_id: this.selectedWarehouse,
+                data: this.selectedProducts.map(item => ({
+                    id: item.product.id,
+                    quantity: item.quantity,
+                    selling_price: parseFloat(item.product.selling_price)
+                }))
+            }
+
+            axios.post('/api/v1/sales', requestData)
+                .then(() => {
+                    this.selectedProducts = []
+                    this.errors = []
+                    this.dialog = false
+                    this.received = 0
+                    this.showSnackbar('Sale created!')
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors
+                })
+        },
+
         addToCart(product) {
             this.selectedProducts.push({product, quantity: 1});
             this.searchText = ''
+            this.calculateTotal()
         },
 
         removeFromCart(product) {
             const existingProduct = this.selectedProducts.find(p => p.product === product);
             const index = this.selectedProducts.indexOf(existingProduct);
             this.selectedProducts.splice(index, 1);
+            this.calculateTotal()
         },
 
         isInCart(product) {
@@ -33,11 +94,21 @@ export default {
         },
 
         calculateTotal() {
-            return this.selectedProducts.reduce((total, {
+            this.total = this.selectedProducts.reduce((total, {
                 product,
                 quantity
             }) => total + product.selling_price * quantity, 0).toFixed(2);
         },
+
+        calculateChange() {
+            this.change = this.received - this.total;
+            this.change = Math.max(0, this.change);
+        },
+
+        showSnackbar(text) {
+            this.snackbar = true
+            this.snackbarText = text
+        }
     },
 
     computed: {
@@ -54,7 +125,13 @@ export default {
 
     mounted() {
         this.getProducts()
-    }
+        this.getClients()
+        this.getWarehouses()
+    },
+
+    watch: {
+        received: 'calculateChange'
+    },
 
 };
 </script>
@@ -68,78 +145,46 @@ export default {
     </v-row>
     <v-row>
         <v-col cols="12" lg="8">
-            <v-container class="border border-opacity-25">
-                <v-row>
-                    <v-col cols="12" sm="4" md="4" lg="3" v-for="product in filteredProducts" :key="product.name">
-                        <v-card
-                            class="mx-auto my-2"
-                            max-width="374"
-                        >
-
-                            <v-img
-                                aspect-ratio="1/1"
-                                height="200"
-                                cover
-                                :src="product.image ? product.image : 'https://picsum.photos/200'"
-                            ></v-img>
-
-                            <v-card-title>{{ product.title }}</v-card-title>
-
-                            <v-card-text class="text-h6 text-medium-emphasis">${{ product.selling_price }}</v-card-text>
-
-                            <v-card-actions>
-                                <v-btn @click="addToCart(product)"
-                                       :disabled="isInCart(product)" block append-icon="mdi-cart">Add to cart
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-col>
-                </v-row>
-                <h2 v-if="filteredProducts.length === 0" class="pt-6 text-center">Not found</h2>
-            </v-container>
+            <cash-products-list :filteredProducts="filteredProducts" @addToCart="addToCart"
+                                :isInCart="isInCart"></cash-products-list>
         </v-col>
 
         <v-col cols="12" lg="4">
-            <v-container class="border border-opacity-25">
-                <v-card>
-                    <v-card-title class="text-center text-h4 mt-3">Cart</v-card-title>
-                    <v-divider></v-divider>
-                    <v-card-text v-if="selectedProducts.length > 0">
-                        <v-list>
-                            <v-list-item v-for="cartItem in selectedProducts" :key="cartItem.product.title">
-                                <v-list-item-title>{{ cartItem.product.title }}</v-list-item-title>
-                                <v-list-item-action>
-                                    <v-spacer></v-spacer>
-                                    <v-responsive max-width="110">
-                                        <v-text-field class="pt-5 mr-2" density="compact" disabled>
-                                            ${{ cartItem.product.selling_price }}
-                                        </v-text-field>
-                                    </v-responsive>
-                                    <v-responsive max-width="100">
-                                        <v-text-field class="pt-5 mr-2" v-model="cartItem.quantity" label="Quantity"
-                                                      type="number" min="1" density="compact"></v-text-field>
-                                    </v-responsive>
-                                    <v-btn @click="removeFromCart(cartItem.product)" color="red" icon="mdi-close"
-                                           size="small"></v-btn>
-                                </v-list-item-action>
-                            </v-list-item>
-                        </v-list>
-                        <v-divider class="mb-5"></v-divider>
-                        <span class="text-subtitle-1">Total: ${{ calculateTotal() }}</span>
-                    </v-card-text>
-
-                    <v-card-text v-else>
-                        <h2 class="text-center my-5">Empty</h2>
-                    </v-card-text>
-
-                    <v-card-text v-if="selectedProducts.length > 0">
-                        <v-btn class="mb-2" variant="text" block color="green">Checkout</v-btn>
-                        <v-btn variant="text" block color="red">Cancel</v-btn>
-                    </v-card-text>
-                </v-card>
-            </v-container>
+            <cart-summary
+                :selectedProducts="selectedProducts"
+                :dialog="dialog"
+                :total="total"
+                @removeFromCart="removeFromCart"
+                @checkout="dialog = !dialog"
+                @calculateTotal="calculateTotal"
+                @clearCart="selectedProducts = []"
+            ></cart-summary>
         </v-col>
     </v-row>
+
+    <v-dialog v-model="dialog" max-width="600">
+        <v-card>
+            <v-card-title>Checkout</v-card-title>
+            <v-card-text>
+                <v-select v-model="selectedWarehouse" :items="warehouses" :error-messages="errors.warehouse_id"
+                          item-title="title" item-value="id" placeholder="Warehouse"></v-select>
+                <v-select v-model="selectedClient" :items="clients" :error-messages="errors.client_id" item-title="name"
+                          item-value="id" placeholder="Client"></v-select>
+            </v-card-text>
+
+            <v-card-text>
+                Total amount: {{ total }}
+                <v-text-field v-model="received" placeholder="Received" type="number"></v-text-field>
+                <v-text-field v-model="change" label="Change" type="number" disabled=""></v-text-field>
+            </v-card-text>
+
+            <v-card-actions>
+                <v-btn @click="createSale" block color="teal-darken-2" variant="flat">Complete</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <my-snack-bar v-model="snackbar" :snackbarText="snackbarText" @closeSnack="snackbar = !snackbar"></my-snack-bar>
 </template>
 
 
