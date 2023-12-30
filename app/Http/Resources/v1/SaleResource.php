@@ -21,6 +21,8 @@ class SaleResource extends JsonResource
             'total_amount' => $this->total_amount,
             'profit' => $this->profit,
             'created_at' => $this->created_at->format('d-m-y'),
+            'client' => $this->whenLoaded('client'),
+            'user' => $this->whenLoaded('user'),
             'movements'=> MovementResource::collection($this->whenLoaded('movements'))
         ];
     }

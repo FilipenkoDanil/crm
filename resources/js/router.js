@@ -101,6 +101,24 @@ const router = createRouter({
             }
         },
         {
+            path: '/sales',
+            name: 'sales.index',
+            component: () => import('./pages/sales/SalesPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Sales'
+            }
+        },
+        {
+            path: '/sales/:id',
+            name: 'sales.show',
+            component: () => import('./pages/sales/SaleInfoPage.vue'),
+            meta: {
+                layout: 'MainLayout',
+                pageTitleBar: 'Sale info'
+            }
+        },
+        {
             path: '/categories',
             name: 'categories.index',
             component: () => import('./pages/categories/CategoriesPage.vue'),
