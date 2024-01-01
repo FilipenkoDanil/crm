@@ -22,7 +22,7 @@ class PurchaseController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return PurchaseResource::collection(Purchase::orderBy('created_at', 'desc')->paginate(15));
+        return PurchaseResource::collection(Purchase::orderBy('created_at', 'desc')->with('user', 'supplier')->get());
     }
 
     public function store(StorePurchaseRequest $request): JsonResponse
@@ -32,7 +32,7 @@ class PurchaseController extends Controller
 
     public function show(Purchase $purchase): JsonResponse
     {
-        return response()->json(new PurchaseResource($purchase->load('movements')));
+        return response()->json(new PurchaseResource($purchase->load('movements.product', 'movements.warehouse', 'supplier', 'user')));
     }
 
     public function update(Purchase $purchase): JsonResponse

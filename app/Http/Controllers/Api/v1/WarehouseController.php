@@ -23,7 +23,7 @@ class WarehouseController extends Controller
 
     public function show(Warehouse $warehouse): JsonResponse
     {
-        return response()->json(new WarehouseResource($warehouse));
+        return response()->json(new WarehouseResource($warehouse->load('products')));
     }
 
     public function update(UpdateWarehouseRequest $request, Warehouse $warehouse): JsonResponse

@@ -18,7 +18,8 @@ class WarehouseResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'address' => $this->address
+            'address' => $this->address,
+            'products' => ProductResource::collection($this->whenLoaded('products'))
         ];
     }
 }

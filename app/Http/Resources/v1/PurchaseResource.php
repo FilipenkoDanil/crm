@@ -21,7 +21,10 @@ class PurchaseResource extends JsonResource
             'user_id' => $this->user_id,
             'total_amount' => $this->total_amount,
             'isApproved' => $this->isApproved,
-            'movements' => $this->whenLoaded('movements')
+            'created_at' => $this->created_at->format('d-m-Y H:i'),
+            'movements' => $this->whenLoaded('movements'),
+            'user' => $this->whenLoaded('user'),
+            'supplier' => $this->whenLoaded('supplier')
         ];
     }
 }

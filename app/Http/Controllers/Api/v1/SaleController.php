@@ -21,7 +21,7 @@ class SaleController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return SaleResource::collection(Sale::orderBy('created_at', 'desc')->paginate(15));
+        return SaleResource::collection(Sale::orderBy('created_at', 'desc')->with('client', 'user')->get());
     }
 
     public function store(StoreSaleRequest $request): JsonResponse
@@ -31,7 +31,7 @@ class SaleController extends Controller
 
     public function show(Sale $sale): JsonResponse
     {
-        $sale = Sale::with('movements.product')->findOrFail($sale->id);
+        $sale = Sale::with('movements.product', 'movements.warehouse', 'client', 'user')->findOrFail($sale->id);
         return response()->json(new SaleResource($sale));
     }
 }

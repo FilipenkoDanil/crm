@@ -29,7 +29,8 @@ class SupplierController extends Controller
 
     public function update(UpdateSupplierRequest $request, Supplier $supplier): JsonResponse
     {
-        return response()->json(new SupplierResource($supplier->update($request->validated())));
+        $supplier->update($request->validated());
+        return response()->json(new SupplierResource($supplier));
     }
 
     public function destroy(Supplier $supplier): ?bool

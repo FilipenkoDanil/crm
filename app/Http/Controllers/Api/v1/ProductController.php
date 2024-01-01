@@ -22,7 +22,7 @@ class ProductController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return ProductResource::collection(Product::paginate(15));
+        return ProductResource::collection(Product::orderBy('created_at', 'desc')->with('category')->get());
     }
 
     public function store(StoreProductRequest $request): JsonResponse
@@ -32,7 +32,9 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
-        return response()->json(new ProductResource($product));
+        return response()->json(new ProductResource($product->load(['movements' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])));
     }
 
     public function update(UpdateProductRequest $request, Product $product): JsonResponse

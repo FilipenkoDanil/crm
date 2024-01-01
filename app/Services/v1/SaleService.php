@@ -21,24 +21,32 @@ class SaleService
 
         $data = $request->validated();
 
-        $sale = DB::transaction(function () use ($request, $data) {
-            $sale = $this->createSale($data);
-            $this->createMovements($sale, $request->input('data'), $data['warehouse_id'], 'selling_price');
-            $this->updateTotalAmount($sale);
-            $this->calculateProfit($sale);
-            $this->updateStock($sale->movements, 'subtract');
-            return $sale;
-        });
+        try {
+            $sale = DB::transaction(function () use ($request, $data) {
+                $sale = $this->createSale($data);
+                $this->createMovements($sale, $request->input('data'), $data['warehouse_id'], 'selling_price');
+                $this->updateTotalAmount($sale);
+                $this->calculateProfit($sale);
+                $this->updateStock($sale->movements, 'subtract');
+                return $sale;
+            });
 
-        return response()->json(new SaleResource($sale));
+            return response()->json(new SaleResource($sale));
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage(), $e->getCode());
+        }
     }
 
     protected function createSale(array $data)
     {
-        return Sale::create([
-            'client_id' => $data['client_id'],
-            'user_id' => 1 // TODO после добавления авторизации заменить на Auth::id()
-        ]);
+        if (auth()->check()) {
+            return Sale::create([
+                'client_id' => $data['client_id'],
+                'user_id' => auth()->id()
+            ]);
+        } else {
+            throw new \Exception('Unauthorized.', 419);
+        }
     }
 
     protected function calculateProfit(Sale $sale): void

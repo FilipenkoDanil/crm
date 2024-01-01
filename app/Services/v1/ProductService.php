@@ -19,12 +19,16 @@ class ProductService
             $data['image'] = $request->file('image')->store('product/images', 'public');
         }
 
-        return response()->json(new ProductResource(Product::create($data)));
+        return response()->json(new ProductResource(Product::create($data)->load('category')));
     }
 
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
         $data = $request->validated();
+
+        if (array_key_exists('deleteImage', $data)) {
+            $this->deleteImage($product);
+        }
 
         if ($request->hasFile('image')) {
             $this->deleteImage($product);

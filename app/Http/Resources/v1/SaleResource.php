@@ -20,7 +20,9 @@ class SaleResource extends JsonResource
             'client_id' => $this->client_id,
             'total_amount' => $this->total_amount,
             'profit' => $this->profit,
-            'created_at' => $this->created_at->format('d-m-y'),
+            'created_at' => $this->created_at->format('d-m-y H:i'),
+            'client' => $this->whenLoaded('client'),
+            'user' => $this->whenLoaded('user'),
             'movements'=> MovementResource::collection($this->whenLoaded('movements'))
         ];
     }

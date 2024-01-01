@@ -26,9 +26,10 @@ class StorePurchaseRequest extends FormRequest
         return [
             'supplier_id' => 'required|exists:suppliers,id',
             'warehouse_id' => 'required|exists:warehouses,id',
+            'data' => 'required|array',
             'data.*.id' => 'required|exists:products,id',
-            'data.*.quantity' => 'required',
-            'data.*.purchase_price' => 'required',
+            'data.*.quantity' => 'required|min:1|numeric',
+            'data.*.purchase_price' => 'required|min:0.01|numeric',
         ];
     }
 }
