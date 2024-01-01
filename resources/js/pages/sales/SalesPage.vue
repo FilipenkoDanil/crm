@@ -24,6 +24,10 @@ export default {
                     title: 'Profit'
                 },
                 {
+                    key: 'user.name',
+                    title: 'Seller'
+                },
+                {
                     key: 'created_at',
                     title: 'Created at'
                 }

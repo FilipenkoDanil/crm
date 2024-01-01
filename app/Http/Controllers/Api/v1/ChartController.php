@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sale;
 use App\Services\v1\ChartService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
