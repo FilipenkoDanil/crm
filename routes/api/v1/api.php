@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\CategoryController;
+use App\Http\Controllers\Api\v1\ChartController;
 use App\Http\Controllers\Api\v1\ClientController;
 use App\Http\Controllers\Api\v1\ProductController;
 use App\Http\Controllers\Api\v1\ProductWarehouseController;
@@ -29,35 +30,38 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('warehouses', WarehouseController::class);
-Route::apiResource('products', ProductController::class);
-Route::apiResource('clients', ClientController::class);
-Route::apiResource('suppliers', SupplierController::class);
-Route::apiResource('purchases', PurchaseController::class)->except('destroy');
-Route::apiResource('sales', SaleController::class)->except(['update', 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('warehouses', WarehouseController::class);
+    Route::apiResource('products', ProductController::class);
+    Route::apiResource('clients', ClientController::class);
+    Route::apiResource('suppliers', SupplierController::class);
+    Route::apiResource('purchases', PurchaseController::class)->except('destroy');
+    Route::apiResource('sales', SaleController::class)->except(['update', 'destroy']);
 
-Route::patch('/products-warehouses', [ProductWarehouseController::class, 'update']);
+    Route::patch('/products-warehouses', [ProductWarehouseController::class, 'update']);
+    Route::get('/chart/today', [ChartController::class, 'today']);
+    Route::get('/chart/week', [ChartController::class, 'week']);
 
+    Route::prefix('trash')->group(function () {
+        Route::prefix('products')->group(function () {
+            Route::get('/', [TrashController::class, 'products']);
+            Route::post('/{id}/restore', [TrashController::class, 'restoreProduct']);
+        });
 
-Route::prefix('trash')->group(function () {
-    Route::prefix('products')->group(function () {
-        Route::get('/', [TrashController::class, 'products']);
-        Route::post('/{id}/restore', [TrashController::class, 'restoreProduct']);
-    });
+        Route::prefix('suppliers')->group(function () {
+            Route::get('/', [TrashController::class, 'suppliers']);
+            Route::post('/{id}/restore', [TrashController::class, 'restoreSupplier']);
+        });
 
-    Route::prefix('suppliers')->group(function () {
-        Route::get('/', [TrashController::class, 'suppliers']);
-        Route::post('/{id}/restore', [TrashController::class, 'restoreSupplier']);
-    });
+        Route::prefix('clients')->group(function () {
+            Route::get('/', [TrashController::class, 'clients']);
+            Route::post('/{id}/restore', [TrashController::class, 'restoreClient']);
+        });
 
-    Route::prefix('clients')->group(function () {
-        Route::get('/', [TrashController::class, 'clients']);
-        Route::post('/{id}/restore', [TrashController::class, 'restoreClient']);
-    });
-
-    Route::prefix('warehouses')->group(function () {
-        Route::get('/', [TrashController::class, 'warehouses']);
-        Route::post('/{id}/restore', [TrashController::class, 'restoreWarehouse']);
+        Route::prefix('warehouses')->group(function () {
+            Route::get('/', [TrashController::class, 'warehouses']);
+            Route::post('/{id}/restore', [TrashController::class, 'restoreWarehouse']);
+        });
     });
 });
