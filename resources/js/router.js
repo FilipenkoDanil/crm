@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -15,7 +15,7 @@ const router = createRouter({
         {
             path: '/login',
             name: 'login',
-            component: () =>  import('./pages/authorization/LoginPage.vue'),
+            component: () => import('./pages/authorization/LoginPage.vue'),
             meta: {
                 layout: 'AuthLayout'
             }
@@ -147,27 +147,29 @@ const router = createRouter({
     ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const token = localStorage.getItem('x_xsrf_token');
+
+    const response = await axios.get('/api/v1/get-permissions');
+    window.Laravel.jsPermissions = response.data;
 
     if (!token) {
         if (to.name === 'login' || to.name === 'register') {
-            return next();
+            next();
+        } else {
+            next({
+                name: 'login',
+            });
         }
-
-        return next({
-            name: 'login',
-        });
+    } else {
+        if (to.name === 'login' || to.name === 'register') {
+            next({
+                name: 'home',
+            });
+        } else {
+            next();
+        }
     }
-
-
-    if (to.name === 'login' || to.name === 'register') {
-        return next({
-            name: 'home',
-        });
-    }
-
-    next();
 });
 
 export default router
