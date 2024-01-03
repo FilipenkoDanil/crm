@@ -179,7 +179,7 @@ export default {
             </v-card-text>
 
             <v-card-actions>
-                <v-btn @click="createSale" block color="teal-darken-2" variant="flat">Complete</v-btn>
+                <v-btn :disabled="!can('create sales')" @click="createSale" block color="teal-darken-2" variant="flat">Complete</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

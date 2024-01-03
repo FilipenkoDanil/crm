@@ -97,7 +97,7 @@ export default {
                     this.errors = []
                 })
                 .catch(error => {
-                    this.errors = error.response.data.errors
+                    this.errors = error.response.data.errors || {}
                 })
         },
 

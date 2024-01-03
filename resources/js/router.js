@@ -10,7 +10,7 @@ const router = createRouter({
             meta: {
                 layout: 'MainLayout',
                 pageTitleBar: 'Home'
-            }
+            },
         },
         {
             path: '/login',
@@ -34,7 +34,8 @@ const router = createRouter({
             component: () => import('./pages/products/ProductsPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Products'
+                pageTitleBar: 'Products',
+                permissions: ['show products']
             }
         },
         {
@@ -43,7 +44,8 @@ const router = createRouter({
             component: () => import('./pages/clients/ClientsPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Clients'
+                pageTitleBar: 'Clients',
+                permissions: ['show clients']
             }
         },
         {
@@ -52,7 +54,8 @@ const router = createRouter({
             component: () => import('./pages/warehouses/WarehousesPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Warehouses'
+                pageTitleBar: 'Warehouses',
+                permissions: ['show warehouses']
             }
         },
         {
@@ -61,7 +64,8 @@ const router = createRouter({
             component: () => import('./pages/warehouses/WarehouseProductsPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Products in warehouse'
+                pageTitleBar: 'Products in warehouse',
+                permissions: ['show warehouses']
             }
         },
         {
@@ -70,7 +74,8 @@ const router = createRouter({
             component: () => import('./pages/suppliers/SuppliersPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Suppliers'
+                pageTitleBar: 'Suppliers',
+                permissions: ['show suppliers']
             }
         },
         {
@@ -79,7 +84,8 @@ const router = createRouter({
             component: () => import('./pages/purchases/PurchasesPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Purchases'
+                pageTitleBar: 'Purchases',
+                permissions: ['show purchases']
             }
         },
         {
@@ -88,7 +94,8 @@ const router = createRouter({
             component: () => import('./pages/purchases/PurchaseCreatePage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Create purchase'
+                pageTitleBar: 'Create purchase',
+                permissions: ['create purchases']
             }
         },
         {
@@ -97,7 +104,8 @@ const router = createRouter({
             component: () => import('./pages/purchases/PurchaseInfoPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Purchase info'
+                pageTitleBar: 'Purchase info',
+                permissions: ['show purchases']
             }
         },
         {
@@ -106,8 +114,9 @@ const router = createRouter({
             component: () => import('./pages/sales/SalesPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Sales'
-            }
+                pageTitleBar: 'Sales',
+                permissions: ['show sales']
+            },
         },
         {
             path: '/sales/:id',
@@ -115,7 +124,8 @@ const router = createRouter({
             component: () => import('./pages/sales/SaleInfoPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Sale info'
+                pageTitleBar: 'Sale info',
+                permissions: ['show sales']
             }
         },
         {
@@ -124,7 +134,8 @@ const router = createRouter({
             component: () => import('./pages/categories/CategoriesPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Categories'
+                pageTitleBar: 'Categories',
+                permissions: ['show categories']
             }
         },
         {
@@ -133,7 +144,8 @@ const router = createRouter({
             component: () => import('./pages/trash/TrashPage.vue'),
             meta: {
                 layout: 'MainLayout',
-                pageTitleBar: 'Trash'
+                pageTitleBar: 'Trash',
+                permissions: ['show trash']
             }
         },
         {
@@ -142,6 +154,7 @@ const router = createRouter({
             component: () => import('./pages/CashboxPage.vue'),
             meta: {
                 layout: 'CashboxLayout',
+                permissions: ['create sales']
             }
         }
     ]
@@ -149,9 +162,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const token = localStorage.getItem('x_xsrf_token');
-
-    const response = await axios.get('/api/v1/get-permissions');
-    window.Laravel.jsPermissions = response.data;
 
     if (!token) {
         if (to.name === 'login' || to.name === 'register') {
@@ -167,9 +177,26 @@ router.beforeEach(async (to, from, next) => {
                 name: 'home',
             });
         } else {
-            next();
+            const response = await axios.get('/api/v1/get-permissions');
+            window.Laravel.jsPermissions = response.data;
+
+            const requiredPermissions = to.meta.permissions;
+
+            if (!requiredPermissions || hasAllPermissions(requiredPermissions)) {
+                next();
+            } else {
+                next({ name: 'home' });
+            }
         }
     }
 });
+
+function hasAllPermissions(requiredPermissions) {
+    const userPermissions = window.Laravel.jsPermissions?.permissions || [];
+
+    return requiredPermissions.every(permission =>
+        userPermissions.includes(permission)
+    );
+}
 
 export default router

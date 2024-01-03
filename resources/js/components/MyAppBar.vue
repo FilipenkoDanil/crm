@@ -51,8 +51,9 @@ export default {
                         <p class="text-caption mt-1">
 
                         </p>
-                        <v-divider class="my-3"></v-divider>
+                        <v-divider v-if="can('create sales')" class="my-3"></v-divider>
                         <v-btn
+                            v-if="can('create sales')"
                             rounded
                             variant="text"
                             :to="{name: 'cashbox'}"

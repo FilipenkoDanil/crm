@@ -40,9 +40,9 @@ export default {
 
             <v-card-actions class="px-4">
                 <v-btn @click="editDrawerClose" color="warning" variant="outlined">Cancel</v-btn>
-                <v-btn @click="updateSupplier" color="success" variant="outlined">Save</v-btn>
+                <v-btn v-if="can('edit clients')" @click="updateSupplier" color="success" variant="outlined">Save</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="deleteSupplier" color="error" variant="outlined">Delete</v-btn>
+                <v-btn v-if="can('delete clients')" @click="deleteSupplier" color="error" variant="outlined">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </v-navigation-drawer>

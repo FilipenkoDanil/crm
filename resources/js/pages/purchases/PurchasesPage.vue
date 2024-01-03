@@ -75,7 +75,7 @@ export default {
 <template>
     <v-data-table :items="purchases" :headers="headers"  @click:row="onRowClick" hover>
         <template v-slot:item.isApproved="{ item }">
-            <v-btn @click.stop.prevent="toggleApprove(item)" :color="item.isApproved ? 'green' : 'orange-darken-1'">
+            <v-btn :disabled="!can('edit purchases')" @click.stop.prevent="toggleApprove(item)" :color="item.isApproved ? 'green' : 'orange-darken-1'">
                 {{ item.isApproved ? 'Approved' : 'Approve' }}
             </v-btn>
         </template>

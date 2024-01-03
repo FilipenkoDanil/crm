@@ -30,7 +30,7 @@ export default {
             <v-card-title class="text-center mb-3">Editing a client #{{ editableCategory.id }}</v-card-title>
             <v-card-text>
                 <v-text-field variant="outlined" label="Title" placeholder="voluptas"
-                              :disabled="disableInputs"
+                                  :disabled="disableInputs"
                               :error-messages="errors.title"
                               v-model="editableCategory.title" density="compact"></v-text-field>
                 <v-text-field variant="outlined" label="Slug" placeholder="slug-slug"
@@ -52,9 +52,9 @@ export default {
 
             <v-card-actions class="px-4">
                 <v-btn @click="editDrawerClose" color="warning" variant="outlined">Cancel</v-btn>
-                <v-btn @click="updateCategory" color="success" variant="outlined" :disabled="disableInputs">Save</v-btn>
+                <v-btn v-if="can('edit categories')" @click="updateCategory" color="success" variant="outlined" :disabled="disableInputs">Save</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="deleteCategory" color="error" variant="outlined" :disabled="disableInputs">Delete</v-btn>
+                <v-btn v-if="can('delete categories')" @click="deleteCategory" color="error" variant="outlined" :disabled="disableInputs">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </v-navigation-drawer>

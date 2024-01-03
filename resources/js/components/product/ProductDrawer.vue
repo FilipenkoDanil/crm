@@ -89,12 +89,12 @@ export default {
                                   density="compact" type="number" class="w-25"></v-text-field>
                 </div>
 
-                <v-autocomplete v-model="editableProduct.category_id" item-title="title" item-value="id"
+                <v-autocomplete v-if="can('show categories')" v-model="editableProduct.category_id" item-title="title" item-value="id"
                                 :items="categories" variant="outlined" label="Category"></v-autocomplete>
 
                 <v-img :src="editableProduct.image" class="align-center text-center rounded-lg"
                        v-if="editableProduct.image">
-                    <v-tooltip text="Delete">
+                    <v-tooltip v-if="can('edit products')" text="Delete">
                         <template v-slot:activator="{ props }">
                             <v-btn v-bind="props" color="red"
                                    @click="deleteImage"
@@ -113,12 +113,12 @@ export default {
 
             <v-card-actions class="px-4">
                 <v-btn @click="editDrawerClose" color="warning" variant="outlined">Cancel</v-btn>
-                <v-btn @click="updateProduct" color="success" variant="outlined">Save</v-btn>
+                <v-btn v-if="can('edit products')" @click="updateProduct" color="success" variant="outlined">Save</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="deleteProduct" color="error" variant="outlined">Delete</v-btn>
+                <v-btn v-if="can('delete products')" @click="deleteProduct" color="error" variant="outlined">Delete</v-btn>
             </v-card-actions>
 
-            <v-card-text>
+            <v-card-text v-if="can('show purchases & show sales')">
                 <v-btn @click="getMovements" block color="green-darken-3" append-icon="mdi-reload">Get history</v-btn>
 
                 <div class="text-center">

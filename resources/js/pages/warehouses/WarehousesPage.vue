@@ -104,7 +104,7 @@ export default {
                           prepend-inner-icon="mdi-magnify"></v-text-field>
         </v-col>
         <v-col cols="6" sm="6" md="4" lg="3" class="text-end">
-            <v-dialog width="800" @update:modelValue="this.creatableWarehouse = {}, this.errors = []">
+            <v-dialog v-if="can('create warehouses')" width="800" @update:modelValue="this.creatableWarehouse = {}, this.errors = []">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" text="Create warehouse"></v-btn>
                 </template>
