@@ -34,6 +34,18 @@ return [
     'github' => [
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => 'http://example.com/callback-url',
+        'redirect' => env('GITHUB_REDIRECT_URI'),
+    ],
+
+    'vkontakte' => [
+        'client_id' => env('VKONTAKTE_CLIENT_ID'),
+        'client_secret' => env('VKONTAKTE_CLIENT_SECRET'),
+        'redirect' => env('VKONTAKTE_REDIRECT_URI')
+    ],
+
+    'discord' => [
+        'client_id' => env('DISCORD_CLIENT_ID'),
+        'client_secret' => env('DISCORD_CLIENT_SECRET'),
+        'redirect' => env('DISCORD_REDIRECT_URI'),
     ],
 ];
