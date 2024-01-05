@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ClientSeeder::class,
             PermissionRoleSeeder::class,
             ProviderSeeder::class,
+            PaymentSeeder::class
         ]);
     }
 }

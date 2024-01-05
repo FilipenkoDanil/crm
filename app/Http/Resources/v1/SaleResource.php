@@ -20,10 +20,14 @@ class SaleResource extends JsonResource
             'client_id' => $this->client_id,
             'total_amount' => $this->total_amount,
             'profit' => $this->profit,
-            'created_at' => $this->created_at->format('d-m-y H:i'),
+            'payment_id' => $this->payment_id,
+            'isPaid' => $this->isPaid,
+            'order_reference' => $this->order_reference,
+            'created_at' => $this->created_at->format('d M H:i'),
             'client' => $this->whenLoaded('client'),
             'user' => $this->whenLoaded('user'),
-            'movements'=> MovementResource::collection($this->whenLoaded('movements'))
+            'movements' => MovementResource::collection($this->whenLoaded('movements')),
+            'payment' => $this->whenLoaded('payment')
         ];
     }
 }
