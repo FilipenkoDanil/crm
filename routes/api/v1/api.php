@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\v1\ProductWarehouseController;
+use App\Http\Controllers\WayForPayController;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/get-permissions', function () {
     return auth()->check()?auth()->user()->jsPermissions():0;
 });
+Route::post('/wayforpay', [WayForPayController::class, 'service']);
 
 Route::middleware('auth:sanctum')->group(function () {
     require_once 'categories.php';
@@ -33,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
     require_once 'sales.php';
     require_once 'trash.php';
     require_once 'charts.php';
+
+    Route::get('/payments', function () {
+        return Payment::all();
+    });
 
     Route::patch('/products-warehouses', [ProductWarehouseController::class, 'update'])->middleware('can:edit productWarehouses');
 });

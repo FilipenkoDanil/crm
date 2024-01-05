@@ -12,6 +12,10 @@ export default {
                     title: 'Id'
                 },
                 {
+                    key: 'order_reference',
+                    title: 'Order id'
+                },
+                {
                     key: 'client.name',
                     title: 'Client'
                 },
@@ -26,6 +30,14 @@ export default {
                 {
                     key: 'user.name',
                     title: 'Seller'
+                },
+                {
+                    key: 'payment.type',
+                    title: 'Payment'
+                },
+                {
+                    key: 'isPaid',
+                    title: 'Is paid'
                 },
                 {
                     key: 'created_at',
@@ -47,6 +59,10 @@ export default {
             this.$router.push({name: 'sales.show', params: {id: row.item.id}})
         },
 
+        getColor(value) {
+            return value ? 'green' : 'red'
+        },
+
     },
 
     mounted() {
@@ -56,7 +72,13 @@ export default {
 </script>
 
 <template>
-    <v-data-table :items="sales" :headers="headers" @click:row="onRowClick" hover></v-data-table>
+    <v-data-table :items="sales" :headers="headers" @click:row="onRowClick" hover>
+        <template v-slot:item.isPaid="{ value, item }">
+            <v-chip :color="getColor(value)">
+                {{ !!value ? 'Paid' : 'No' }}
+            </v-chip>
+        </template>
+    </v-data-table>
 </template>
 
 <style scoped>

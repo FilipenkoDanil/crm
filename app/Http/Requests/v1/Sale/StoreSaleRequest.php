@@ -30,6 +30,7 @@ class StoreSaleRequest extends FormRequest
             'data.*.id' => 'required|exists:products,id',
             'data.*.quantity' => 'required|min:1|numeric',
             'data.*.selling_price' => 'required|min:0.01|numeric',
+            'payment_id' => 'required|exists:payments,id'
         ];
     }
 }

@@ -10,7 +10,7 @@ class ChartService
 {
     public function getDataForPeriod(Carbon $startDate, Carbon $endDate, string $groupByFormat): array
     {
-        $sales = Sale::whereBetween('created_at', [$startDate, $endDate])
+        $sales = Sale::where('isPaid', true)->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at')
             ->get();
 

@@ -11,7 +11,7 @@ class Sale extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['client_id', 'user_id', 'total_amount', 'profit'];
+    protected $fillable = ['client_id', 'user_id', 'total_amount', 'profit', 'payment_id', 'order_reference'];
 
     public function movements(): MorphMany
     {
@@ -26,5 +26,10 @@ class Sale extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class)->withTrashed();
+    }
+
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
     }
 }
