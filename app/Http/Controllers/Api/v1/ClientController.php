@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\ClientCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Client\StoreClientRequest;
 use App\Http\Requests\v1\Client\UpdateClientRequest;
@@ -26,6 +27,7 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request): JsonResponse
     {
+        broadcast(new ClientCreatedEvent())->toOthers();
         return response()->json(new ClientResource(Client::create($request->validated())));
     }
 

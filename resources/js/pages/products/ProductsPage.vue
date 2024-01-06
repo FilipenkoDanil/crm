@@ -11,6 +11,8 @@ export default {
         return {
             search: '',
             products: [],
+            loading: false,
+
             headers: [
                 {
                     key: 'id',
@@ -57,9 +59,11 @@ export default {
 
     methods: {
         getProducts() {
+            this.loading = true
             axios.get('/api/v1/products')
                 .then(r => {
                     this.products = r.data.data
+                    this.loading = false
                 })
         },
 
@@ -162,6 +166,15 @@ export default {
     mounted() {
         this.getProducts()
         this.getCategories()
+
+        window.Echo.channel('product')
+            .listen('.product-created', () => {
+                this.getProducts()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('product')
     }
 }
 </script>
@@ -193,6 +206,7 @@ export default {
     <v-data-table :items="products" @click:row="onRowClick" items-per-page="25"
                   :headers="headers"
                   :search="search"
+                  :loading="loading"
                   hover></v-data-table>
 
         <product-drawer v-model="editDrawer"

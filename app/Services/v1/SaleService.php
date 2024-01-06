@@ -2,6 +2,7 @@
 
 namespace App\Services\v1;
 
+use App\Events\SaleCreatedEvent;
 use App\Http\Requests\v1\Sale\StoreSaleRequest;
 use App\Http\Resources\v1\SaleResource;
 use App\Models\Product;
@@ -31,6 +32,8 @@ class SaleService
 
                 return $sale;
             });
+
+            broadcast(new SaleCreatedEvent());
 
             if (strtolower($sale->payment->type) === 'card') {
                 return $this->createMerchant($request->input('data'), $sale);

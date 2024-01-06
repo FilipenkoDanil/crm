@@ -2,6 +2,7 @@
 
 namespace App\Services\v1;
 
+use App\Events\ProductCreatedEvent;
 use App\Http\Requests\v1\Product\StoreProductRequest;
 use App\Http\Requests\v1\Product\UpdateProductRequest;
 use App\Http\Resources\v1\ProductResource;
@@ -18,6 +19,8 @@ class ProductService
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('product/images', 'public');
         }
+
+        broadcast(new ProductCreatedEvent())->toOthers();
 
         return response()->json(new ProductResource(Product::create($data)->load('category')));
     }

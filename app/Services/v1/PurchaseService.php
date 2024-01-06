@@ -2,6 +2,7 @@
 
 namespace App\Services\v1;
 
+use App\Events\PurchaseCreatedEvent;
 use App\Http\Requests\v1\Purchase\StorePurchaseRequest;
 use App\Http\Resources\v1\PurchaseResource;
 use App\Models\Purchase;
@@ -30,6 +31,8 @@ class PurchaseService
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), $e->getCode());
         }
+
+        broadcast(new PurchaseCreatedEvent());
 
         return response()->json(new PurchaseResource($purchase));
     }

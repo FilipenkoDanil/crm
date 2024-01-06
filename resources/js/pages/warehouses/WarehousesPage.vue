@@ -12,6 +12,7 @@ export default {
             warehouses: [],
 
             search: '',
+            loading: false,
 
             editDrawer: false,
             editableWarehouse: {},
@@ -26,9 +27,11 @@ export default {
 
     methods: {
         getWarehouses() {
+            this.loading = true
             axios.get('/api/v1/warehouses')
                 .then(r => {
                     this.warehouses = r.data
+                    this.loading = false
                 })
         },
 
@@ -92,6 +95,15 @@ export default {
 
     mounted() {
         this.getWarehouses()
+
+        window.Echo.channel('warehouse')
+            .listen('.warehouse-created', () => {
+                this.getWarehouses()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('warehouse')
     }
 }
 </script>
@@ -120,6 +132,7 @@ export default {
 
     <v-data-table :items="warehouses" @click:row="onRowClick" items-per-page="25"
                   :search="search"
+                  :loading="loading"
                   hover></v-data-table>
 
     <warehouse-drawer v-model="editDrawer"

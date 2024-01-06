@@ -14,6 +14,7 @@
         "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
+        "pusher/pusher-php-server": "^7.2",
         "socialiteproviders/discord": "^4.2",
         "socialiteproviders/github": "^4.1",
         "socialiteproviders/vkontakte": "^5.0",

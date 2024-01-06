@@ -12,6 +12,7 @@ export default {
             categories: [],
 
             search: '',
+            loading: false,
 
             editDrawer: false,
             editableCategory: {},
@@ -48,9 +49,11 @@ export default {
 
     methods: {
         getCategories() {
+            this.loading = true
             axios.get('/api/v1/categories')
                 .then(r => {
                     this.categories = r.data
+                    this.loading = false
                 })
         },
 
@@ -115,6 +118,15 @@ export default {
 
     mounted() {
         this.getCategories()
+
+        window.Echo.channel('category')
+            .listen('.category-created', () => {
+                this.getCategories()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('category')
     }
 }
 </script>
@@ -141,7 +153,7 @@ export default {
 
 
 
-    <v-data-table :items="categories" :headers="headers" :search="search" @click:row="onRowClick"></v-data-table>
+    <v-data-table :items="categories" :headers="headers" :search="search" :loading="loading" @click:row="onRowClick"></v-data-table>
 
     <category-drawer v-model="editDrawer"
                      :editableCategory="editableCategory"

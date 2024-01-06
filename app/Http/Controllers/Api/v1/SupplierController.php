@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\SupplierCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Supplier\StoreSupplierRequest;
 use App\Http\Requests\v1\Supplier\UpdateSupplierRequest;
@@ -19,6 +20,7 @@ class SupplierController extends Controller
 
     public function store(StoreSupplierRequest $request): JsonResponse
     {
+        broadcast(new SupplierCreatedEvent())->toOthers();
         return response()->json(Supplier::create($request->validated()));
     }
 

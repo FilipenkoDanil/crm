@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SaleCreatedEvent;
 use App\Models\Sale;
 use App\Models\Traits\HandlesMovements;
 use Illuminate\Http\JsonResponse;
@@ -40,6 +41,8 @@ class WayForPayController extends Controller
                 }
                 break;
         }
+
+        broadcast(new SaleCreatedEvent());
 
         return response()->json([
             'orderReference' => $obj['orderReference'],

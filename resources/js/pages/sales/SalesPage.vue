@@ -6,6 +6,8 @@ export default {
         return {
             sales: [],
 
+            loading: false,
+
             headers: [
                 {
                     key: 'id',
@@ -49,9 +51,11 @@ export default {
 
     methods: {
         getSales() {
+            this.loading = true
             axios.get('/api/v1/sales')
                 .then(r => {
                     this.sales = r.data.data
+                    this.loading = false
                 })
         },
 
@@ -67,12 +71,21 @@ export default {
 
     mounted() {
         this.getSales()
+
+        window.Echo.channel('sale')
+            .listen('.sale-created', () => {
+                this.getSales()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('sale')
     }
 }
 </script>
 
 <template>
-    <v-data-table :items="sales" :headers="headers" @click:row="onRowClick" hover>
+    <v-data-table :items="sales" :headers="headers" :loading="loading" @click:row="onRowClick" hover>
         <template v-slot:item.isPaid="{ value, item }">
             <v-chip :color="getColor(value)">
                 {{ !!value ? 'Paid' : 'No' }}
