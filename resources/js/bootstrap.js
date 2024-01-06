@@ -18,6 +18,7 @@ window.axios.interceptors.response.use({}, error => {
         const token = localStorage.getItem('x_xsrf_token')
         if (token) {
             localStorage.removeItem('x_xsrf_token')
+            localStorage.removeItem('user_name')
         }
         router.push({name: 'login'})
     }

@@ -123,6 +123,9 @@ export default {
             .listen('.category-created', () => {
                 this.getCategories()
             })
+            .listen('.category-deleted', () => {
+                this.getCategories()
+            })
     },
 
     beforeUnmount() {

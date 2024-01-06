@@ -37,6 +37,7 @@ class WarehouseController extends Controller
     public function destroy(Warehouse $warehouse): JsonResponse
     {
         $warehouse->delete();
+        broadcast(new WarehouseCreatedEvent())->toOthers();
         return response()->json(['message' => 'Warehouse deleted.']);
     }
 }

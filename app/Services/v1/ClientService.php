@@ -2,6 +2,7 @@
 
 namespace App\Services\v1;
 
+use App\Events\ClientDeletedEvent;
 use App\Http\Requests\v1\Client\UpdateClientRequest;
 use App\Http\Resources\v1\ClientResource;
 use App\Models\Client;
@@ -26,6 +27,7 @@ class ClientService
         }
 
         $client->delete();
+        broadcast(new ClientDeletedEvent())->toOthers();
         return response()->json(['success' => true, 'message' => 'Client deleted.']);
     }
 }

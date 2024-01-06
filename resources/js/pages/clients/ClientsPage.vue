@@ -103,6 +103,9 @@ export default {
             .listen('.client-created', () => {
                 this.getClients()
             })
+            .listen('.client-deleted', () => {
+                this.getClients()
+            })
     },
 
     beforeUnmount() {

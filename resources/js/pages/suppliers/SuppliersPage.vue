@@ -102,6 +102,9 @@ export default {
             .listen('.supplier-created', () => {
                 this.getSuppliers()
             })
+            .listen('.supplier-deleted', () => {
+                this.getSuppliers()
+            })
     },
 
     beforeUnmount() {

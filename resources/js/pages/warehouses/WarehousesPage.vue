@@ -100,6 +100,9 @@ export default {
             .listen('.warehouse-created', () => {
                 this.getWarehouses()
             })
+            .listen('.warehouse-deleted', () => {
+                this.getWarehouses()
+            })
     },
 
     beforeUnmount() {

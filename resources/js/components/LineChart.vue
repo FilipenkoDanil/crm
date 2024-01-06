@@ -68,14 +68,14 @@ export default {
     },
 
     created() {
-        window.Echo.channel('sale-created')
+        window.Echo.channel('sale')
             .listen('.sale-created', () => {
                 this.getChart()
             })
     },
 
     beforeUnmount() {
-        window.Echo.leave('sale-created')
+        window.Echo.leave('sale')
     },
 
     mounted() {

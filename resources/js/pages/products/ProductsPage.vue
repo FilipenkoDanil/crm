@@ -171,6 +171,9 @@ export default {
             .listen('.product-created', () => {
                 this.getProducts()
             })
+            .listen('product-deleted', () => {
+                this.getProducts()
+            })
     },
 
     beforeUnmount() {

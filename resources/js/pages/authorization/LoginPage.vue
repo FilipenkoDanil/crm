@@ -1,5 +1,6 @@
 <script>
 import OAuthTooltip from "@/components/oauth/OAuthTooltip.vue";
+import axios from "axios";
 
 export default {
     name: "LoginPage",
@@ -26,13 +27,18 @@ export default {
                         email: this.email,
                         password: this.password,
                     })
-                        .then(r => {
-                            this.loading = false
-                            localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN'])
-                            this.$router.push({name: 'home'})
+                        .then(() => {
+                            axios.get('/api/v1/user')
+                                .then(r => {
+                                    localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN'])
+                                    localStorage.setItem('user_name', r.data.name)
+                                    this.$router.push({name: 'home'})
+                                })
                         })
                         .catch(err => {
                             this.errors = err.response.data.errors
+                        })
+                        .finally(() => {
                             this.loading = false
                         })
                 })
@@ -40,14 +46,16 @@ export default {
 
         handleAuthenticatedEvent(event) {
             if (event.origin === window.location.origin && event.data.status === 'authenticated') {
-                axios.get("/api/v1/user").then(response => {
-                    this.loading = false;
-                    localStorage.setItem('x_xsrf_token', response.config.headers['X-XSRF-TOKEN']);
+                axios.get("/api/v1/user").then(r => {
+                    localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN']);
+                    localStorage.setItem('user_name', r.data.name)
                     this.$router.push({name: 'home'})
                 })
                     .catch(() => {
-                        this.loading = false;
                         this.errors.email = 'OAuth error. Please, try again.'
+                    })
+                    .finally(() => {
+                        this.loading = false
                     })
             } else if (event.origin === window.location.origin && event.data.status === 'canceled') {
                 this.loading = false;
