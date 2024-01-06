@@ -9,6 +9,8 @@ export default {
         return {
             purchases: [],
 
+            loading: false,
+
             headers: [
                 {
                     key: 'id',
@@ -39,9 +41,11 @@ export default {
 
     methods: {
         getPurchases() {
+            this.loading = true
             axios.get('/api/v1/purchases')
                 .then(r => {
                     this.purchases = r.data.data
+                    this.loading = false
                 })
         },
 
@@ -68,14 +72,23 @@ export default {
 
     mounted() {
         this.getPurchases()
-    }
+
+        window.Echo.channel('purchase')
+            .listen('.purchase', () => {
+                this.getPurchases()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('purchase')
+    },
 }
 </script>
 
 <template>
-    <v-data-table :items="purchases" :headers="headers"  @click:row="onRowClick" hover>
+    <v-data-table :items="purchases" :headers="headers" :loading="loading" @click:row="onRowClick" hover>
         <template v-slot:item.isApproved="{ item }">
-            <v-btn @click.stop.prevent="toggleApprove(item)" :color="item.isApproved ? 'green' : 'orange-darken-1'">
+            <v-btn :disabled="!can('edit purchases')" @click.stop.prevent="toggleApprove(item)" :color="item.isApproved ? 'green' : 'orange-darken-1'">
                 {{ item.isApproved ? 'Approved' : 'Approve' }}
             </v-btn>
         </template>

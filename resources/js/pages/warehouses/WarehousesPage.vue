@@ -12,6 +12,7 @@ export default {
             warehouses: [],
 
             search: '',
+            loading: false,
 
             editDrawer: false,
             editableWarehouse: {},
@@ -26,9 +27,11 @@ export default {
 
     methods: {
         getWarehouses() {
+            this.loading = true
             axios.get('/api/v1/warehouses')
                 .then(r => {
                     this.warehouses = r.data
+                    this.loading = false
                 })
         },
 
@@ -92,6 +95,18 @@ export default {
 
     mounted() {
         this.getWarehouses()
+
+        window.Echo.channel('warehouse')
+            .listen('.warehouse-created', () => {
+                this.getWarehouses()
+            })
+            .listen('.warehouse-deleted', () => {
+                this.getWarehouses()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('warehouse')
     }
 }
 </script>
@@ -104,7 +119,7 @@ export default {
                           prepend-inner-icon="mdi-magnify"></v-text-field>
         </v-col>
         <v-col cols="6" sm="6" md="4" lg="3" class="text-end">
-            <v-dialog width="800" @update:modelValue="this.creatableWarehouse = {}, this.errors = []">
+            <v-dialog v-if="can('create warehouses')" width="800" @update:modelValue="this.creatableWarehouse = {}, this.errors = []">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" text="Create warehouse"></v-btn>
                 </template>
@@ -120,6 +135,7 @@ export default {
 
     <v-data-table :items="warehouses" @click:row="onRowClick" items-per-page="25"
                   :search="search"
+                  :loading="loading"
                   hover></v-data-table>
 
     <warehouse-drawer v-model="editDrawer"

@@ -1,6 +1,10 @@
 <script>
+import OAuthTooltip from "@/components/oauth/OAuthTooltip.vue";
+import axios from "axios";
+
 export default {
     name: "LoginPage",
+    components: {OAuthTooltip},
 
     data() {
         return {
@@ -8,7 +12,9 @@ export default {
             password: '',
             errors: [],
 
-            loading: false
+            loading: false,
+
+            oauthWindow: null,
         }
     },
 
@@ -21,17 +27,52 @@ export default {
                         email: this.email,
                         password: this.password,
                     })
-                        .then(r => {
-                            this.loading = false
-                            localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN'])
-                            this.$router.push({name: 'home'})
+                        .then(() => {
+                            axios.get('/api/v1/user')
+                                .then(r => {
+                                    localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN'])
+                                    localStorage.setItem('user_name', r.data.name)
+                                    this.$router.push({name: 'home'})
+                                })
                         })
                         .catch(err => {
                             this.errors = err.response.data.errors
+                        })
+                        .finally(() => {
                             this.loading = false
                         })
                 })
+        },
+
+        handleAuthenticatedEvent(event) {
+            if (event.origin === window.location.origin && event.data.status === 'authenticated') {
+                axios.get("/api/v1/user").then(r => {
+                    localStorage.setItem('x_xsrf_token', r.config.headers['X-XSRF-TOKEN']);
+                    localStorage.setItem('user_name', r.data.name)
+                    this.$router.push({name: 'home'})
+                })
+                    .catch(() => {
+                        this.errors.email = 'OAuth error. Please, try again.'
+                    })
+                    .finally(() => {
+                        this.loading = false
+                    })
+            } else if (event.origin === window.location.origin && event.data.status === 'canceled') {
+                this.loading = false;
+                this.errors.email = 'OAuth error. Please, try again.'
+            }
+        },
+
+        auth(provider) {
+            this.loading = true;
+            this.oauthWindow = window.open(`/auth/${provider}`, "_blank");
+
+            window.addEventListener('message', this.handleAuthenticatedEvent);
         }
+    },
+
+    beforeUnmount() {
+        window.removeEventListener('message', this.handleAuthenticatedEvent);
     }
 }
 </script>
@@ -75,21 +116,7 @@ export default {
                     <v-divider></v-divider>
                 </v-col>
                 <v-col cols="12" class="d-flex justify-center mt-n5">
-                    <v-btn variant="plain" icon>
-                        <v-icon color="red">
-                            mdi-google
-                        </v-icon>
-                    </v-btn>
-                    <v-btn variant="plain" icon>
-                        <v-icon color="blue">
-                            mdi-facebook
-                        </v-icon>
-                    </v-btn>
-                    <v-btn variant="plain" icon>
-                        <v-icon>
-                            mdi-github
-                        </v-icon>
-                    </v-btn>
+                    <o-auth-tooltip @auth="auth"></o-auth-tooltip>
                 </v-col>
             </v-row>
 

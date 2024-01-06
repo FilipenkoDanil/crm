@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\WarehouseCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Warehouse\StoreWarehouseRequest;
 use App\Http\Requests\v1\Warehouse\UpdateWarehouseRequest;
@@ -18,6 +19,7 @@ class WarehouseController extends Controller
 
     public function store(StoreWarehouseRequest $request): JsonResponse
     {
+        broadcast(new WarehouseCreatedEvent())->toOthers();
         return response()->json(Warehouse::create($request->validated()));
     }
 
@@ -35,6 +37,7 @@ class WarehouseController extends Controller
     public function destroy(Warehouse $warehouse): JsonResponse
     {
         $warehouse->delete();
+        broadcast(new WarehouseCreatedEvent())->toOthers();
         return response()->json(['message' => 'Warehouse deleted.']);
     }
 }

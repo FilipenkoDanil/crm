@@ -12,6 +12,7 @@ export default {
             categories: [],
 
             search: '',
+            loading: false,
 
             editDrawer: false,
             editableCategory: {},
@@ -48,9 +49,11 @@ export default {
 
     methods: {
         getCategories() {
+            this.loading = true
             axios.get('/api/v1/categories')
                 .then(r => {
                     this.categories = r.data
+                    this.loading = false
                 })
         },
 
@@ -115,6 +118,18 @@ export default {
 
     mounted() {
         this.getCategories()
+
+        window.Echo.channel('category')
+            .listen('.category-created', () => {
+                this.getCategories()
+            })
+            .listen('.category-deleted', () => {
+                this.getCategories()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('category')
     }
 }
 </script>
@@ -127,7 +142,7 @@ export default {
                           prepend-inner-icon="mdi-magnify"></v-text-field>
         </v-col>
         <v-col cols="6" sm="6" md="4" lg="3" class="text-end">
-            <v-dialog width="800" @update:modelValue="this.creatableCategory = {}, this.errors = []">
+            <v-dialog v-if="can('create categories')" width="800" @update:modelValue="this.creatableCategory = {}, this.errors = []">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" text="Create category"></v-btn>
                 </template>
@@ -141,7 +156,7 @@ export default {
 
 
 
-    <v-data-table :items="categories" :headers="headers" :search="search" @click:row="onRowClick"></v-data-table>
+    <v-data-table :items="categories" :headers="headers" :search="search" :loading="loading" @click:row="onRowClick"></v-data-table>
 
     <category-drawer v-model="editDrawer"
                      :editableCategory="editableCategory"

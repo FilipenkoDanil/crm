@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\CategoryCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Category\StoreCategoryRequest;
 use App\Http\Requests\v1\Category\UpdateCategoryRequest;
@@ -26,6 +27,7 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request): JsonResponse
     {
+        broadcast(new CategoryCreatedEvent())->toOthers();
         return response()->json(Category::create($request->validated()));
     }
 

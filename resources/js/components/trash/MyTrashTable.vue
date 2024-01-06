@@ -20,7 +20,7 @@ export default {
     <v-data-table :items="items" hover>
         <template v-slot:item.actions="{ item }">
             <v-tooltip text="Restore item">
-                <template v-slot:activator="{ props }">
+                <template v-if="can('restore trash')" v-slot:activator="{ props }">
                     <v-btn v-bind="props" icon @click="restoreItem(item)" flat="">
                         <v-icon color="green">mdi-delete-restore</v-icon>
                     </v-btn>

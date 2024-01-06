@@ -2,6 +2,7 @@
 
 namespace App\Services\v1;
 
+use App\Events\CategoryDeletedEvent;
 use App\Http\Requests\v1\Category\UpdateCategoryRequest;
 use App\Http\Resources\v1\CategoryResource;
 use App\Models\Category;
@@ -31,6 +32,8 @@ class CategoryService
             $category->subcategories()->update(['parent_id' => $category->parent_id]);
             $category->delete();
         });
+
+        broadcast(new CategoryDeletedEvent())->toOthers();
 
         return response()->json(['success' => true, 'message' => 'Category deleted.']);
     }

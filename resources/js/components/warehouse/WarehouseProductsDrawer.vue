@@ -35,7 +35,7 @@ export default {
 
             <v-card-actions class="px-4">
                 <v-btn @click="editDrawerClose" color="warning" variant="outlined">Cancel</v-btn>
-                <v-btn @click="updateProduct" color="success" variant="outlined">Save</v-btn>
+                <v-btn v-if="can('edit productWarehouses')" @click="updateProduct" color="success" variant="outlined">Save</v-btn>
             </v-card-actions>
         </v-card>
     </v-navigation-drawer>

@@ -2,17 +2,31 @@
 export default {
     name: "MyAppBar",
 
+    data() {
+        return {
+            userName: ''
+        }
+    },
+
     methods: {
         logout() {
             axios.post('/logout')
                 .then(() => {
                     localStorage.removeItem('x_xsrf_token')
+                    localStorage.removeItem('user_name')
                     this.$router.push({name: 'login'})
                 })
         },
         emitButtonClick() {
             this.$emit('buttonClick');
         },
+        getUserName() {
+            this.userName = localStorage.getItem('user_name')
+        }
+    },
+
+    mounted() {
+        this.getUserName()
     }
 }
 </script>
@@ -45,14 +59,12 @@ export default {
                         <v-avatar
                             color="brown"
                         >
-                            <span class="text-h5">as</span>
+                            <v-img src="https://i.pravatar.cc/300"></v-img>
                         </v-avatar>
-                        <h3></h3>
-                        <p class="text-caption mt-1">
-
-                        </p>
-                        <v-divider class="my-3"></v-divider>
+                        <h3>{{ userName }}</h3>
+                        <v-divider v-if="can('create sales')" class="my-3"></v-divider>
                         <v-btn
+                            v-if="can('create sales')"
                             rounded
                             variant="text"
                             :to="{name: 'cashbox'}"

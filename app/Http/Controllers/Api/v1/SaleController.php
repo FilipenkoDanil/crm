@@ -21,7 +21,7 @@ class SaleController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return SaleResource::collection(Sale::orderBy('created_at', 'desc')->with('client', 'user')->get());
+        return SaleResource::collection(Sale::orderBy('created_at', 'desc')->with('client', 'user', 'payment')->get());
     }
 
     public function store(StoreSaleRequest $request): JsonResponse

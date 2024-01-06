@@ -1,15 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\v1\CategoryController;
-use App\Http\Controllers\Api\v1\ChartController;
-use App\Http\Controllers\Api\v1\ClientController;
-use App\Http\Controllers\Api\v1\ProductController;
 use App\Http\Controllers\Api\v1\ProductWarehouseController;
-use App\Http\Controllers\Api\v1\PurchaseController;
-use App\Http\Controllers\Api\v1\SaleController;
-use App\Http\Controllers\Api\v1\SupplierController;
-use App\Http\Controllers\Api\v1\TrashController;
-use App\Http\Controllers\Api\v1\WarehouseController;
+use App\Http\Controllers\WayForPayController;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,40 +21,25 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+Route::get('/get-permissions', function () {
+    return auth()->check()?auth()->user()->jsPermissions():0;
+});
+Route::post('/wayforpay', [WayForPayController::class, 'service']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('warehouses', WarehouseController::class);
-    Route::apiResource('products', ProductController::class);
-    Route::apiResource('clients', ClientController::class);
-    Route::apiResource('suppliers', SupplierController::class);
-    Route::apiResource('purchases', PurchaseController::class)->except('destroy');
-    Route::apiResource('sales', SaleController::class)->except(['update', 'destroy']);
+    require_once 'categories.php';
+    require_once 'warehouses.php';
+    require_once 'products.php';
+    require_once 'clients.php';
+    require_once 'suppliers.php';
+    require_once 'purchases.php';
+    require_once 'sales.php';
+    require_once 'trash.php';
+    require_once 'charts.php';
 
-    Route::patch('/products-warehouses', [ProductWarehouseController::class, 'update']);
-    Route::get('/chart/today', [ChartController::class, 'today']);
-    Route::get('/chart/week', [ChartController::class, 'week']);
-
-    Route::prefix('trash')->group(function () {
-        Route::prefix('products')->group(function () {
-            Route::get('/', [TrashController::class, 'products']);
-            Route::post('/{id}/restore', [TrashController::class, 'restoreProduct']);
-        });
-
-        Route::prefix('suppliers')->group(function () {
-            Route::get('/', [TrashController::class, 'suppliers']);
-            Route::post('/{id}/restore', [TrashController::class, 'restoreSupplier']);
-        });
-
-        Route::prefix('clients')->group(function () {
-            Route::get('/', [TrashController::class, 'clients']);
-            Route::post('/{id}/restore', [TrashController::class, 'restoreClient']);
-        });
-
-        Route::prefix('warehouses')->group(function () {
-            Route::get('/', [TrashController::class, 'warehouses']);
-            Route::post('/{id}/restore', [TrashController::class, 'restoreWarehouse']);
-        });
+    Route::get('/payments', function () {
+        return Payment::all();
     });
+
+    Route::patch('/products-warehouses', [ProductWarehouseController::class, 'update'])->middleware('can:edit productWarehouses');
 });

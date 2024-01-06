@@ -67,6 +67,17 @@ export default {
         },
     },
 
+    created() {
+        window.Echo.channel('sale')
+            .listen('.sale-created', () => {
+                this.getChart()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('sale')
+    },
+
     mounted() {
         this.getChart()
     }

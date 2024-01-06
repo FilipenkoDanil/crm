@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             WarehouseSeeder::class,
             SupplierSeeder::class,
             ClientSeeder::class,
+            PermissionRoleSeeder::class,
+            ProviderSeeder::class,
+            PaymentSeeder::class
         ]);
     }
 }

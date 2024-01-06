@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\ProductDeletedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Product\StoreProductRequest;
 use App\Http\Requests\v1\Product\UpdateProductRequest;
@@ -44,6 +45,7 @@ class ProductController extends Controller
 
     public function destroy(Product $product): ?bool
     {
+        broadcast(new ProductDeletedEvent())->toOthers();
         return $product->delete();
     }
 }

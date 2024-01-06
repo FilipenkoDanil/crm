@@ -12,6 +12,7 @@ export default {
             suppliers: [],
 
             search: '',
+            loading: false,
 
             editDrawer: false,
             editableSupplier: {},
@@ -26,9 +27,11 @@ export default {
 
     methods: {
         getSuppliers() {
+            this.loading = true
             axios.get('/api/v1/suppliers')
                 .then(r => {
                     this.suppliers = r.data.data
+                    this.loading = false
                 })
         },
 
@@ -94,6 +97,18 @@ export default {
 
     mounted() {
         this.getSuppliers()
+
+        window.Echo.channel('supplier')
+            .listen('.supplier-created', () => {
+                this.getSuppliers()
+            })
+            .listen('.supplier-deleted', () => {
+                this.getSuppliers()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave('supplier')
     }
 }
 </script>
@@ -106,7 +121,7 @@ export default {
                           prepend-inner-icon="mdi-magnify"></v-text-field>
         </v-col>
         <v-col cols="6" sm="6" md="4" lg="3" class="text-end">
-            <v-dialog width="800" @update:modelValue="this.creatableSupplier = {}, this.errors = []">
+            <v-dialog v-if="can('create suppliers')" width="800" @update:modelValue="this.creatableSupplier = {}, this.errors = []">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" text="Create supplier"></v-btn>
                 </template>
@@ -123,6 +138,7 @@ export default {
 
     <v-data-table :items="suppliers" @click:row="onRowClick" items-per-page="25"
                   :search="search"
+                  :loading="loading"
                   hover></v-data-table>
 
     <supplier-drawer v-model="editDrawer"

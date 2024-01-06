@@ -6,14 +6,22 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "ahmedsaoud31/laravel-permission-to-vuejs": "dev-master",
         "cviebrock/eloquent-sluggable": "^9.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
+        "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.7",
-        "laravel/ui": "^4.2"
+        "laravel/ui": "^4.2",
+        "pusher/pusher-php-server": "^7.2",
+        "socialiteproviders/discord": "^4.2",
+        "socialiteproviders/github": "^4.1",
+        "socialiteproviders/vkontakte": "^5.0",
+        "spatie/laravel-permission": "^6.3"
     },
     "require-dev": {
+        "doctrine/dbal": "^3.7",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",

@@ -27,6 +27,22 @@ export default {
 
             snackbar: false,
             snackbarText: '',
+
+            formData: {
+                merchantAccount: "",
+                merchantDomainName: "",
+                orderReference: null,
+                orderDate: null,
+                amount: null,
+                currency: "",
+                productName: [],
+                productPrice: [],
+                productCount: [],
+                merchantSignature: "",
+            },
+
+            payment_id: 1,
+            payments: {}
         }
     },
 
@@ -52,19 +68,48 @@ export default {
                 })
         },
 
+        getPayments() {
+            axios.get('/api/v1/payments')
+                .then(r => {
+                    this.payments = r.data
+                })
+        },
+
         createSale() {
             const requestData = {
                 client_id: this.selectedClient,
                 warehouse_id: this.selectedWarehouse,
+                payment_id: this.payment_id,
                 data: this.selectedProducts.map(item => ({
                     id: item.product.id,
                     quantity: item.quantity,
                     selling_price: parseFloat(item.product.selling_price)
-                }))
+                })),
             }
 
             axios.post('/api/v1/sales', requestData)
-                .then(() => {
+                .then(response => {
+                    if (response.data.payment === 'card') {
+                        const responseData = response.data[0];
+
+                        this.formData.productName = responseData.productName;
+                        this.formData.productPrice = responseData.productPrice;
+                        this.formData.productCount = responseData.productCount;
+
+                        this.formData.merchantAccount = response.data.merchantAccount;
+                        this.formData.merchantDomainName = response.data.merchantDomainName;
+                        this.formData.orderReference = response.data.orderReference;
+                        this.formData.orderDate = response.data.orderDate;
+                        this.formData.amount = response.data.amount;
+                        this.formData.currency = response.data.currency;
+                        this.formData.merchantSignature = response.data.merchantSignature;
+                        this.formData.serviceUrl = response.data.serviceUrl;
+
+                        setTimeout(() => {
+                            document.getElementById('paymentForm').submit()
+                        }, 1000)
+                    }
+
                     this.selectedProducts = []
                     this.errors = []
                     this.dialog = false
@@ -127,6 +172,7 @@ export default {
         this.getProducts()
         this.getClients()
         this.getWarehouses()
+        this.getPayments()
     },
 
     watch: {
@@ -170,6 +216,7 @@ export default {
                           item-title="title" item-value="id" placeholder="Warehouse"></v-select>
                 <v-select v-model="selectedClient" :items="clients" :error-messages="errors.client_id" item-title="name"
                           item-value="id" placeholder="Client"></v-select>
+                <v-select v-model="payment_id" :items="payments" item-title="type" item-value="id"></v-select>
             </v-card-text>
 
             <v-card-text>
@@ -179,12 +226,31 @@ export default {
             </v-card-text>
 
             <v-card-actions>
-                <v-btn @click="createSale" block color="teal-darken-2" variant="flat">Complete</v-btn>
+                <v-btn :disabled="!can('create sales')" @click="createSale" block color="teal-darken-2" variant="flat">Complete</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 
     <my-snack-bar v-model="snackbar" :snackbarText="snackbarText" @closeSnack="snackbar = !snackbar"></my-snack-bar>
+
+
+    <form id="paymentForm" method="post" action="https://secure.wayforpay.com/pay" accept-charset="utf-8"  target="_blank">
+        <input type="hidden" name="merchantAccount" :value="formData.merchantAccount">
+        <input type="hidden" name="merchantAuthType" value="SimpleSignature">
+        <input type="hidden" name="merchantDomainName" :value="formData.merchantDomainName">
+        <input type="hidden" name="orderReference" :value="formData.orderReference">
+        <input type="hidden" name="orderDate" :value="formData.orderDate">
+        <input type="hidden" name="amount" :value="formData.amount">
+        <input type="hidden" name="currency" :value="formData.currency">
+        <input type="hidden" name="orderTimeout" value="600">
+        <input type="hidden" name="serviceUrl" :value="formData.serviceUrl">
+
+        <input v-for="(productName, index) in formData.productName" :key="index" type="hidden" :name="'productName[]'" :value="productName">
+        <input v-for="(productPrice, index) in formData.productPrice" :key="index" type="hidden" :name="'productPrice[]'" :value="productPrice">
+        <input v-for="(productCount, index) in formData.productCount" :key="index" type="hidden" :name="'productCount[]'" :value="productCount">
+
+        <input type="hidden" name="merchantSignature" :value="formData.merchantSignature">
+    </form>
 </template>
 
 
