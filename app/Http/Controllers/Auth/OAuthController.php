@@ -30,10 +30,6 @@ class OAuthController extends Controller
             if (!$user->exists) {
                 $user->name = $socialUser->getName();
                 $user->save();
-
-                if ($user->wasRecentlyCreated) {
-                    $user->assignRole('cashier');
-                }
             }
 
             Auth::login($user);
