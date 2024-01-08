@@ -25,8 +25,7 @@ export default {
                 >
 
                     <v-img
-                        aspect-ratio="1/1"
-                        height="200"
+                        min-height="300"
                         cover
                         :src="product.image ? product.image : `https://picsum.photos/200?random?${product.id}`"
                     ></v-img>

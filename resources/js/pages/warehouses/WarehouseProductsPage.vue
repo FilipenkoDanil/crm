@@ -113,6 +113,15 @@ export default {
 
     mounted() {
         this.getWarehouse()
+
+        window.Echo.channel(`warehouse-${this.$route.params.id}`)
+            .listen('.purchase-approved', () => {
+                this.getWarehouse()
+            })
+    },
+
+    beforeUnmount() {
+        window.Echo.leave(`warehouse-${this.$route.params.id}`)
     }
 }
 </script>

@@ -171,7 +171,7 @@ export default {
             .listen('.product-created', () => {
                 this.getProducts()
             })
-            .listen('product-deleted', () => {
+            .listen('.product-deleted', () => {
                 this.getProducts()
             })
     },

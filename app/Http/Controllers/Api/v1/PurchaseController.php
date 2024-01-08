@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Events\PurchaseCreatedEvent;
+use App\Events\WarehouseProductApprove;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\Purchase\StorePurchaseRequest;
 use App\Http\Resources\v1\PurchaseResource;
@@ -43,6 +43,8 @@ class PurchaseController extends Controller
             $purchase->isApproved = !$purchase->isApproved;
             $purchase->save();
         });
+
+        broadcast(new WarehouseProductApprove($purchase->movements[0]->warehouse_id));
 
         return response()->json(new PurchaseResource($purchase));
     }
