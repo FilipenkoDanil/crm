@@ -27,6 +27,6 @@ class Warehouse extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->withPivot(['stock', 'min_stock_notify']);
+        return $this->belongsToMany(Product::class)->withPivot(['stock', 'min_stock_notify'])->orderBy('created_at', 'desc');
     }
 }

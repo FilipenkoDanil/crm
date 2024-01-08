@@ -106,7 +106,7 @@ export default {
                     </v-tooltip>
                 </v-img>
 
-                <v-file-input v-model="editableProduct.uploadImage" accept="image/png, image/jpeg" show-size
+                <v-file-input v-if="can('edit products')" v-model="editableProduct.uploadImage" accept="image/png, image/jpeg" show-size
                               :error-messages="errors.image"
                               label="Upload image" class="mt-4"></v-file-input>
             </v-card-text>
