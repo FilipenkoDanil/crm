@@ -74,7 +74,7 @@ export default {
         this.getPurchases()
 
         window.Echo.channel('purchase')
-            .listen('.purchase', () => {
+            .listen('.purchase-created', () => {
                 this.getPurchases()
             })
     },
