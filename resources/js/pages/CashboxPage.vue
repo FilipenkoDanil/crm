@@ -28,19 +28,6 @@ export default {
             snackbar: false,
             snackbarText: '',
 
-            formData: {
-                merchantAccount: "",
-                merchantDomainName: "",
-                orderReference: null,
-                orderDate: null,
-                amount: null,
-                currency: "",
-                productName: [],
-                productPrice: [],
-                productCount: [],
-                merchantSignature: "",
-            },
-
             payment_id: 1,
             payments: {}
         }
@@ -89,25 +76,47 @@ export default {
 
             axios.post('/api/v1/sales', requestData)
                 .then(response => {
-                    if (response.data.payment === 'card') {
+                    if (response.data.payment === 'card' && response.data.system === 'LiqPay') {
+                        const form = document.createElement('form');
+                        form.setAttribute('method', 'post');
+                        form.setAttribute('action', 'https://www.liqpay.ua/api/3/checkout');
+                        form.setAttribute('accept-charset', 'utf-8');
+                        form.setAttribute('target', '_blank');
+
+                        Object.entries(response.data).forEach(([key, value]) => {
+                            if (key !== 'productName' && key !== 'productPrice' && key !== 'productCount' && key !== 'system' && key !== 'payment') {
+                                form.appendChild(this.createHiddenInput(key, value));
+                            }
+                        });
+
+                        document.body.appendChild(form);
+                        form.submit();
+                        document.body.removeChild(form);
+
+                    } else if (response.data.payment === 'card' && response.data.system === 'WayForPay') {
                         const responseData = response.data[0];
 
-                        this.formData.productName = responseData.productName;
-                        this.formData.productPrice = responseData.productPrice;
-                        this.formData.productCount = responseData.productCount;
+                        const form = document.createElement('form');
+                        form.setAttribute('method', 'post');
+                        form.setAttribute('action', 'https://secure.wayforpay.com/pay');
+                        form.setAttribute('accept-charset', 'utf-8');
+                        form.setAttribute('target', '_blank');
 
-                        this.formData.merchantAccount = response.data.merchantAccount;
-                        this.formData.merchantDomainName = response.data.merchantDomainName;
-                        this.formData.orderReference = response.data.orderReference;
-                        this.formData.orderDate = response.data.orderDate;
-                        this.formData.amount = response.data.amount;
-                        this.formData.currency = response.data.currency;
-                        this.formData.merchantSignature = response.data.merchantSignature;
-                        this.formData.serviceUrl = response.data.serviceUrl;
+                        responseData.productName.forEach((productName, index) => {
+                            form.appendChild(this.createHiddenInput('productName[]', productName));
+                            form.appendChild(this.createHiddenInput('productPrice[]', responseData.productPrice[index]));
+                            form.appendChild(this.createHiddenInput('productCount[]', responseData.productCount[index]));
+                        });
 
-                        setTimeout(() => {
-                            document.getElementById('paymentForm').submit()
-                        }, 1000)
+                        Object.entries(response.data).forEach(([key, value]) => {
+                            if (key !== 'productName' && key !== 'productPrice' && key !== 'productCount' && key !== 'system' && key !== 'payment') {
+                                form.appendChild(this.createHiddenInput(key, value));
+                            }
+                        });
+
+                        document.body.appendChild(form);
+                        form.submit();
+                        document.body.removeChild(form);
                     }
 
                     this.selectedProducts = []
@@ -119,6 +128,14 @@ export default {
                 .catch(error => {
                     this.errors = error.response.data.errors
                 })
+        },
+
+        createHiddenInput(name, value) {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', name);
+            input.setAttribute('value', value);
+            return input;
         },
 
         addToCart(product) {
@@ -233,24 +250,6 @@ export default {
 
     <my-snack-bar v-model="snackbar" :snackbarText="snackbarText" @closeSnack="snackbar = !snackbar"></my-snack-bar>
 
-
-    <form id="paymentForm" method="post" action="https://secure.wayforpay.com/pay" accept-charset="utf-8"  target="_blank">
-        <input type="hidden" name="merchantAccount" :value="formData.merchantAccount">
-        <input type="hidden" name="merchantAuthType" value="SimpleSignature">
-        <input type="hidden" name="merchantDomainName" :value="formData.merchantDomainName">
-        <input type="hidden" name="orderReference" :value="formData.orderReference">
-        <input type="hidden" name="orderDate" :value="formData.orderDate">
-        <input type="hidden" name="amount" :value="formData.amount">
-        <input type="hidden" name="currency" :value="formData.currency">
-        <input type="hidden" name="orderTimeout" value="600">
-        <input type="hidden" name="serviceUrl" :value="formData.serviceUrl">
-
-        <input v-for="(productName, index) in formData.productName" :key="index" type="hidden" :name="'productName[]'" :value="productName">
-        <input v-for="(productPrice, index) in formData.productPrice" :key="index" type="hidden" :name="'productPrice[]'" :value="productPrice">
-        <input v-for="(productCount, index) in formData.productCount" :key="index" type="hidden" :name="'productCount[]'" :value="productCount">
-
-        <input type="hidden" name="merchantSignature" :value="formData.merchantSignature">
-    </form>
 </template>
 
 

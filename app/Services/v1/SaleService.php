@@ -2,10 +2,10 @@
 
 namespace App\Services\v1;
 
+use App\Contracts\Payment;
 use App\Events\SaleCreatedEvent;
 use App\Http\Requests\v1\Sale\StoreSaleRequest;
 use App\Http\Resources\v1\SaleResource;
-use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Traits\HandlesMovements;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 class SaleService
 {
     use HandlesMovements;
+
+    public function __construct(private Payment $payment){}
 
     public function store(StoreSaleRequest $request): JsonResponse
     {
@@ -36,7 +38,7 @@ class SaleService
             broadcast(new SaleCreatedEvent());
 
             if (strtolower($sale->payment->type) === 'card') {
-                return $this->createMerchant($request->input('data'), $sale);
+                return $this->payment->merchant($sale, $request);
             }
 
             $sale->isPaid = true;
@@ -68,55 +70,5 @@ class SaleService
             return ($item->unit_price - $item->product->purchase_price) * $item->quantity;
         })->sum();
         $sale->save();
-    }
-
-    protected function createMerchant(array $data, $sale)
-    {
-        $resultData = [
-            'productName' => [],
-            'productPrice' => [],
-            'productCount' => [],
-        ];
-
-
-        $productNameString = '';
-        $productPriceString = '';
-        $productCountString = '';
-        foreach ($data as $item) {
-            $product = Product::find($item['id']);
-            if ($product) {
-                $resultData['productName'][] = $product->title;
-                $resultData['productPrice'][] = $product->selling_price;
-                $resultData['productCount'][] = $item['quantity'];
-
-                $productNameString .= $product->title . ';';
-                $productPriceString .= $product->selling_price . ';';
-                $productCountString .= $item['quantity'] . ';';
-            }
-        }
-
-        $merchantAccount = env('MERCHANT_ACCOUNT');
-        $merchantDomainName = env('APP_URL');
-        $orderReference = $sale->order_reference;
-        $orderDate = time();
-        $amount = $sale->total_amount;
-        $currency = 'UAH';
-
-        $merchantSignature = $merchantAccount . ';' . $merchantDomainName . ';' . $orderReference . ';' . $orderDate . ';' . $amount . ';' . $currency . ';' . $productNameString . $productCountString . $productPriceString;
-        $merchantSignature = substr($merchantSignature, 0, -1);
-        $hash = hash_hmac('md5', $merchantSignature, env('MERCHANT_SECRET'));
-
-        return response()->json([
-            $resultData,
-            'merchantAccount' => $merchantAccount,
-            'merchantDomainName' => $merchantDomainName,
-            'orderReference' => $orderReference,
-            'orderDate' => $orderDate,
-            'amount' => $amount,
-            'currency' => $currency,
-            'merchantSignature' => $hash,
-            'serviceUrl' => env('APP_URL') . '/api/v1/wayforpay',
-            'payment' => 'card'
-        ]);
     }
 }

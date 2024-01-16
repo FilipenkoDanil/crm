@@ -24,3 +24,6 @@ Warehouse management system with online payment capabilities.
 3. Install dependencies: `composer install & npm install`
 4. Run migrations: `php artisan migrate --seed`
 5. Start the project: `php artisan serve & vite`
+
+## Note
+For payment services to work, `APP_URL` must be accessible from the internet, for example, using ngrok or similar tools.
